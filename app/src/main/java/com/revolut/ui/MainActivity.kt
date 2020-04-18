@@ -1,7 +1,8 @@
-package com.revolut
+package com.revolut.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.revolut.R
 import com.revolut.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {

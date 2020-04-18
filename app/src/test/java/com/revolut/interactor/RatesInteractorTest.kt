@@ -12,6 +12,7 @@ import org.junit.Test
 class RatesInteractorTest {
 
     private lateinit var subject: RatesInteractor
+
     private val mockDataService: DataService = mock()
     private val responseData: RatesResponse = RatesResponse(
         "base",
@@ -27,6 +28,6 @@ class RatesInteractorTest {
     @Test
     fun `fetch data should succeed`(){
         subject.fetchRates().test()
-            .assertValue(responseData)
+            .assertValue(responseData.rates)
     }
 }
