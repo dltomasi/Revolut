@@ -9,12 +9,23 @@ import com.revolut.SchedulersProvider
 import com.revolut.interactor.RatesInteractor
 import com.revolut.model.Rates
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import java.util.concurrent.TimeUnit
+
+class TestSchedulerProvider(private val scheduler: TestScheduler) : SchedulersProvider {
+    override val main: Scheduler
+        get() = scheduler
+    override val background: Scheduler
+        get() = scheduler
+
+}
 
 
 class RatesViewModelTest {
@@ -25,22 +36,32 @@ class RatesViewModelTest {
     lateinit var viewModel: RatesViewModel
 
     private val ratesInteractor: RatesInteractor = mock()
-    private val schedulersProvider: SchedulersProvider = mock()
+    private val testScheduler = TestScheduler()
+    private val schedulersProvider = TestSchedulerProvider(testScheduler)
     private val responseData: Rates = Rates(
         hashMapOf("test1" to 1F, "test2" to 2f)
     )
 
     @Before
     fun before() {
-        whenever(schedulersProvider.background).thenReturn(Schedulers.trampoline())
-        whenever(schedulersProvider.main).thenReturn(Schedulers.trampoline())
         whenever(ratesInteractor.fetchRates()).thenReturn(Observable.just(responseData))
         viewModel = RatesViewModel(schedulersProvider, ratesInteractor)
     }
 
     @Test
     fun `should get rates on init`() {
-        assertEquals(viewModel.rates.value, responseData)
+        testScheduler.triggerActions()
+        verify(ratesInteractor, times(1)).fetchRates()
+        assertEquals(responseData, viewModel.rates.value)
     }
 
+    @Test
+    fun `should get rates every 1 sec`() {
+        testScheduler.triggerActions()
+        verify(ratesInteractor, times(1)).fetchRates()
+        testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
+        verify(ratesInteractor, times(2)).fetchRates()
+        testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
+        verify(ratesInteractor, times(3)).fetchRates()
+    }
 }

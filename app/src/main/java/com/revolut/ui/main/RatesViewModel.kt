@@ -1,12 +1,13 @@
 package com.revolut.ui.main
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.revolut.SchedulersProvider
 import com.revolut.interactor.RatesInteractor
 import com.revolut.model.Rates
 import com.revolut.ui.BaseViewModel
 import com.revolut.uiSubscribe
+import io.reactivex.Observable
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class RatesViewModel @Inject constructor(
@@ -24,7 +25,9 @@ class RatesViewModel @Inject constructor(
 
     private fun getRates() {
         addReaction(
-            ratesInteractor.fetchRates()
+            Observable
+                .interval(0,1, TimeUnit.SECONDS, scheduler.background)
+                .flatMap { ratesInteractor.fetchRates() }
                 .uiSubscribe(scheduler)
                 .subscribe(
                     { rates.value = it },
@@ -36,6 +39,5 @@ class RatesViewModel @Inject constructor(
     private fun handleError(error: Throwable) {
         error.printStackTrace()
     }
-
 
 }
