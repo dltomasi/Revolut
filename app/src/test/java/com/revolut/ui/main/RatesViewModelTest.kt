@@ -5,12 +5,10 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
-import com.revolut.SchedulersProvider
+import com.revolut.TestSchedulerProvider
 import com.revolut.interactor.RatesInteractor
 import com.revolut.model.Rates
 import io.reactivex.Observable
-import io.reactivex.Scheduler
-import io.reactivex.schedulers.Schedulers
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -18,14 +16,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import java.util.concurrent.TimeUnit
-
-class TestSchedulerProvider(private val scheduler: TestScheduler) : SchedulersProvider {
-    override val main: Scheduler
-        get() = scheduler
-    override val background: Scheduler
-        get() = scheduler
-
-}
 
 
 class RatesViewModelTest {
