@@ -4,7 +4,6 @@ import com.google.gson.internal.LinkedTreeMap
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import com.revolut.RatesMap
-import com.revolut.model.Rates
 import com.revolut.model.RatesResponse
 import com.revolut.network.DataService
 import io.reactivex.Observable

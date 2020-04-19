@@ -1,6 +1,5 @@
 package com.revolut.ui.main
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,10 +10,7 @@ import com.global.test.globaltest.network.WebClient
 import com.revolut.R
 import com.revolut.RatesMap
 import com.revolut.SchedulersProvider
-import com.revolut.interactor.RatesInteractor
 import com.revolut.interactor.RatesInteractorImpl
-import com.revolut.model.Rates
-import com.revolut.network.DataService
 import kotlinx.android.synthetic.main.main_fragment.*
 
 class RatesFragment : Fragment() {

@@ -9,8 +9,6 @@ import com.nhaarman.mockito_kotlin.whenever
 import com.revolut.RatesMap
 import com.revolut.TestSchedulerProvider
 import com.revolut.interactor.RatesInteractor
-import com.revolut.model.Rates
-import com.revolut.model.RatesResponse
 import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert.assertEquals

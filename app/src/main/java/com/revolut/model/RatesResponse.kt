@@ -1,6 +1,6 @@
 package com.revolut.model
 
-import com.google.gson.internal.LinkedTreeMap
+
 import com.revolut.RatesMap
 
 data class RatesResponse(
@@ -9,13 +9,10 @@ data class RatesResponse(
     val rates: RatesMap
 )
 
-class Rates(val underlying:LinkedTreeMap<String, Float>) : Map<String, Float> by underlying {
-    override fun get(key: String): Float? {
-        return underlying[key]
-    }
-}
+typealias Rate = Pair<String, Float>
 
-fun Rates.getRateFor(currency:String): Float? =
-     this.underlying[currency]
+fun Rate.getCurrency(): String =
+    this.first
 
-fun Rates.getCurrencies() : List<String> = this.keys.toList()
+fun Rate.getRate(): String =
+     this.second.toString()

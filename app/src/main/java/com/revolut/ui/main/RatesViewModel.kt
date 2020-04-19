@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import com.revolut.RatesMap
 import com.revolut.SchedulersProvider
 import com.revolut.interactor.RatesInteractor
-import com.revolut.model.Rates
 import com.revolut.ui.BaseViewModel
 import com.revolut.uiSubscribe
 import io.reactivex.Observable
