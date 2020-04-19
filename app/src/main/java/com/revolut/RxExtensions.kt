@@ -1,11 +1,10 @@
 package com.revolut
 
-import io.reactivex.Completable
+import com.google.gson.internal.LinkedTreeMap
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-// example of kotlin extensions
+typealias RatesMap = LinkedTreeMap<String, Float>
 
 fun <T> Observable<T>.uiSubscribe(schedulers: SchedulersProvider): Observable<T> {
     return subscribeOn(schedulers.background).observeOn(schedulers.main)

@@ -1,13 +1,16 @@
 package com.revolut.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.google.gson.internal.LinkedTreeMap
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import com.revolut.RatesMap
 import com.revolut.TestSchedulerProvider
 import com.revolut.interactor.RatesInteractor
 import com.revolut.model.Rates
+import com.revolut.model.RatesResponse
 import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert.assertEquals
@@ -28,13 +31,15 @@ class RatesViewModelTest {
     private val ratesInteractor: RatesInteractor = mock()
     private val testScheduler = TestScheduler()
     private val schedulersProvider = TestSchedulerProvider(testScheduler)
-    private val responseData: Rates = Rates(
-        hashMapOf("test1" to 1F, "test2" to 2f)
-    )
+    var ratesMap: RatesMap = LinkedTreeMap()
 
+    init {
+        ratesMap["r1"] = 1F
+        ratesMap["r2"] = 2F
+    }
     @Before
     fun before() {
-        whenever(ratesInteractor.fetchRates()).thenReturn(Observable.just(responseData))
+        whenever(ratesInteractor.fetchRates()).thenReturn(Observable.just(ratesMap))
         viewModel = RatesViewModel(schedulersProvider, ratesInteractor)
     }
 
@@ -42,7 +47,7 @@ class RatesViewModelTest {
     fun `should get rates on init`() {
         testScheduler.triggerActions()
         verify(ratesInteractor, times(1)).fetchRates()
-        assertEquals(responseData, viewModel.rates.value)
+        assertEquals(ratesMap, viewModel.rates.value)
     }
 
     @Test

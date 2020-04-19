@@ -1,6 +1,7 @@
 package com.revolut.ui.main
 
 import androidx.lifecycle.MutableLiveData
+import com.revolut.RatesMap
 import com.revolut.SchedulersProvider
 import com.revolut.interactor.RatesInteractor
 import com.revolut.model.Rates
@@ -15,8 +16,8 @@ class RatesViewModel @Inject constructor(
     private val ratesInteractor: RatesInteractor
 ) : BaseViewModel() {
 
-    val rates: MutableLiveData<Rates> by lazy {
-        MutableLiveData<Rates>()
+    val rates: MutableLiveData<RatesMap> by lazy {
+        MutableLiveData<RatesMap>()
     }
 
     init {

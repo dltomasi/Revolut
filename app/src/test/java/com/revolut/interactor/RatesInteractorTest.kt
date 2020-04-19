@@ -1,7 +1,9 @@
 package com.revolut.interactor
 
+import com.google.gson.internal.LinkedTreeMap
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import com.revolut.RatesMap
 import com.revolut.model.Rates
 import com.revolut.model.RatesResponse
 import com.revolut.network.DataService
@@ -14,10 +16,16 @@ class RatesInteractorTest {
     private lateinit var subject: RatesInteractor
 
     private val mockDataService: DataService = mock()
-    private val responseData: RatesResponse = RatesResponse(
-        "base",
-        Rates(hashMapOf("test1" to 1F, "test2" to 2f))
-    )
+    var ratesMap: RatesMap = LinkedTreeMap()
+    private var responseData: RatesResponse
+
+    init {
+        ratesMap["r1"] = 1F
+        ratesMap["r2"] = 2F
+        responseData = RatesResponse(
+            "base",
+            ratesMap)
+    }
 
     @Before
     fun before(){

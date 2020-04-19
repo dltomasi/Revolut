@@ -1,12 +1,15 @@
 package com.revolut.model
 
+import com.google.gson.internal.LinkedTreeMap
+import com.revolut.RatesMap
+
 data class RatesResponse(
 
     val baseCurrency: String,
-    val rates: Rates
+    val rates: RatesMap
 )
 
-class Rates(val underlying:HashMap<String, Float>) : MutableMap<String, Float> by underlying {
+class Rates(val underlying:LinkedTreeMap<String, Float>) : Map<String, Float> by underlying {
     override fun get(key: String): Float? {
         return underlying[key]
     }
