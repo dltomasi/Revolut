@@ -38,8 +38,8 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
 
     fun setData(rates: List<Rate>) {
         items = rates
-        //notifyItemRangeChanged(1, items.size - 1)
-        notifyDataSetChanged()
+        notifyItemRangeChanged(1, items.size - 1)
+        //notifyDataSetChanged()
     }
 
     inner class RateViewHolder(parent: ViewGroup, val onClick: (position: Int) -> Unit) :
@@ -57,10 +57,8 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                 if (position == 0) {
                     value.afterTextChanged { fieldValue ->
                         // logic
-                        fieldValue.toFloat().apply {
-                           // update values
-                            notifyDataSetChanged()
-                        }
+                        listListener.onValueChanged(fieldValue)
+
                     }
                 }
             }

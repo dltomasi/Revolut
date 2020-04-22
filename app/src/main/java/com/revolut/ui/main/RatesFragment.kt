@@ -40,6 +40,13 @@ class RatesFragment : Fragment() {
 
     private fun setUpList() {
         rates_list.adapter = adapter
+
+        adapter.listListener = object : RateListListener {
+            override fun onValueChanged(value: String) {
+                    viewModel.setNewValue(value)
+            }
+        }
+
         val ratesObserver = Observer<List<Rate>> { rates ->
             adapter.setData(rates)
         }

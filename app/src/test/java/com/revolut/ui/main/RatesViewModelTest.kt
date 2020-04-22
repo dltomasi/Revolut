@@ -6,6 +6,7 @@ import com.nhaarman.mockito_kotlin.*
 import com.revolut.RatesMap
 import com.revolut.TestSchedulerProvider
 import com.revolut.interactor.RatesInteractor
+import com.revolut.model.Rate
 import com.revolut.ui.main.RatesViewModel.Companion.START_CURRENCY
 import com.revolut.ui.main.RatesViewModel.Companion.TIME_INTERVAL
 import io.reactivex.Observable
@@ -57,5 +58,23 @@ class RatesViewModelTest {
         verify(ratesInteractor, times(2)).fetchRates(any())
         testScheduler.advanceTimeBy(TIME_INTERVAL, TimeUnit.SECONDS)
         verify(ratesInteractor, times(3)).fetchRates(any())
+    }
+
+    @Test
+    fun `set new value should update list`() {
+        testScheduler.triggerActions()
+        viewModel.setNewValue("2")
+
+        val expected = listOf(Pair("EUR", 2.0F), Pair("r1", 2.0F), Pair("r2", 4.0F))
+        assertEquals(expected, viewModel.rates.value)
+    }
+
+    @Test
+    fun `set empty value should update list with zeros`() {
+        testScheduler.triggerActions()
+        viewModel.setNewValue("")
+
+        val expected = listOf(Pair("EUR", 0F), Pair("r1", 0F), Pair("r2", 0F))
+        assertEquals(expected, viewModel.rates.value)
     }
 }

@@ -37,9 +37,7 @@ class RatesViewModel @Inject constructor(
                     ratesInteractor.fetchRates(first.getCurrency())
                         .map { it.toList() }
                         .flatMapIterable { it }
-                        .map {
-                            it.copy(second = it.getRateValue() * first.getRateValue())
-                        }
+                        .map { it.copy(second = it.getRateValue() * first.getRateValue()) }
                         .toList().toObservable()
                 }
                 .uiSubscribe(scheduler)
@@ -48,15 +46,23 @@ class RatesViewModel @Inject constructor(
                         it.add(0, first)
                         rates.value = it
                     },
-                    {
-                        handleError(it)
-                    }
+                    { handleError(it) }
                 )
         )
     }
 
     private fun handleError(error: Throwable) {
         error.printStackTrace()
+    }
+
+    fun setNewValue(value: String) {
+        first = if (value.isEmpty()) {
+            first.copy(second = 0F)
+        } else {
+            first.copy(second = value.toFloat())
+        }
+        rates.value =
+            rates.value!!.map { it.copy(second = it.getRateValue() * first.getRateValue()) }
     }
 
     companion object {
