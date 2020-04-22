@@ -11,6 +11,8 @@ import com.revolut.R
 import com.revolut.RatesMap
 import com.revolut.SchedulersProvider
 import com.revolut.interactor.RatesInteractorImpl
+import com.revolut.model.Rate
+import com.revolut.model.getCurrency
 import kotlinx.android.synthetic.main.main_fragment.*
 
 class RatesFragment : Fragment() {
@@ -38,11 +40,17 @@ class RatesFragment : Fragment() {
 
     private fun setUpList() {
         rates_list.adapter = adapter
-        val ratesObserver = Observer<RatesMap> { rates ->
+        val ratesObserver = Observer<List<Rate>> { rates ->
             adapter.setData(rates)
         }
 
         viewModel.rates.observe(viewLifecycleOwner, ratesObserver)
+
+//        val selectedObserver = Observer<Rate> { rate ->
+//            viewModel.base = rate.getCurrency()
+//        }
+//
+//        adapter.selected.observe(viewLifecycleOwner, selectedObserver)
     }
 
 }

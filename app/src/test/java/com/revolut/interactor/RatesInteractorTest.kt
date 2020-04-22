@@ -1,6 +1,7 @@
 package com.revolut.interactor
 
 import com.google.gson.internal.LinkedTreeMap
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import com.revolut.RatesMap
@@ -28,13 +29,13 @@ class RatesInteractorTest {
 
     @Before
     fun before(){
-        whenever(mockDataService.fetchRates()).thenReturn(Observable.just(responseData))
+        whenever(mockDataService.fetchRates(any())).thenReturn(Observable.just(responseData))
         subject = RatesInteractorImpl(mockDataService)
     }
 
     @Test
     fun `fetch data should succeed`(){
-        subject.fetchRates().test()
+        subject.fetchRates("").test()
             .assertValue(responseData.rates)
     }
 }

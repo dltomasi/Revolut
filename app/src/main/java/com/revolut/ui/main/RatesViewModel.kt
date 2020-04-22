@@ -1,9 +1,11 @@
 package com.revolut.ui.main
 
 import androidx.lifecycle.MutableLiveData
-import com.revolut.RatesMap
 import com.revolut.SchedulersProvider
 import com.revolut.interactor.RatesInteractor
+import com.revolut.model.Rate
+import com.revolut.model.getCurrency
+import com.revolut.model.getRateValue
 import com.revolut.ui.BaseViewModel
 import com.revolut.uiSubscribe
 import io.reactivex.Observable
@@ -15,9 +17,13 @@ class RatesViewModel @Inject constructor(
     private val ratesInteractor: RatesInteractor
 ) : BaseViewModel() {
 
-    val rates: MutableLiveData<RatesMap> by lazy {
-        MutableLiveData<RatesMap>()
-    }
+//    val rates: MutableLiveData<List<Rate>> by lazy {
+//        MutableLiveData<List<Rate>>()
+//    }
+
+    val rates = MutableLiveData<List<Rate>>()
+
+    var first: Rate = START_CURRENCY
 
     init {
         getRates()
@@ -26,12 +32,25 @@ class RatesViewModel @Inject constructor(
     private fun getRates() {
         addReaction(
             Observable
-                .interval(0,1, TimeUnit.SECONDS, scheduler.background)
-                .flatMap { ratesInteractor.fetchRates() }
+                .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
+                .flatMap {
+                    ratesInteractor.fetchRates(first.getCurrency())
+                        .map { it.toList() }
+                        .flatMapIterable { it }
+                        .map {
+                            it.copy(second = it.getRateValue() * first.getRateValue())
+                        }
+                        .toList().toObservable()
+                }
                 .uiSubscribe(scheduler)
                 .subscribe(
-                    { rates.value = it },
-                    { handleError(it) }
+                    {
+                        it.add(0, first)
+                        rates.value = it
+                    },
+                    {
+                        handleError(it)
+                    }
                 )
         )
     }
@@ -40,4 +59,10 @@ class RatesViewModel @Inject constructor(
         error.printStackTrace()
     }
 
+    companion object {
+        const val TIME_INTERVAL = 1L
+        val START_CURRENCY = Pair("EUR", 1F)
+    }
+
 }
+

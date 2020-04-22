@@ -16,3 +16,6 @@ fun Rate.getCurrency(): String =
 
 fun Rate.getRate(): String =
      this.second.toString()
+
+fun Rate.getRateValue(): Float =
+    this.second

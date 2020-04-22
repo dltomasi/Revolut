@@ -2,25 +2,27 @@ package com.revolut.ui.main
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.revolut.R
 import com.revolut.RatesMap
+import com.revolut.afterTextChanged
 import com.revolut.model.Rate
 import com.revolut.model.getCurrency
 import com.revolut.model.getRate
 import kotlinx.android.synthetic.main.rate_item.view.*
 
-class RatesAdapter : RecyclerView.Adapter<RateViewHolder>() {
+class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
 
-    private var items = mutableListOf<Rate>()
-    private var first = Rate("", 0F)
+    private var items = emptyList<Rate>()
+    lateinit var listListener: RateListListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RateViewHolder {
         return RateViewHolder(parent) {
             items.apply {
-                first = removeAt(it)
-                add(0, first)
+                // send to top
+//                selected.value = removeAt(it)
+//                add(0, selected.value!!)
                 notifyDataSetChanged()
             }
         }
@@ -32,30 +34,38 @@ class RatesAdapter : RecyclerView.Adapter<RateViewHolder>() {
         holder.bind(position, items[position])
     }
 
-    fun setData(rates: RatesMap) {
-        var item: Rate? = null
-        rates[first.getCurrency()]?.let {
-            item = Pair(first.getCurrency(), it)
-            rates.remove(first.getCurrency())
-        }
-        items = rates.toList().toMutableList()
-        item?.let {  items.add(0, it) }
+
+
+    fun setData(rates: List<Rate>) {
+        items = rates
+        //notifyItemRangeChanged(1, items.size - 1)
         notifyDataSetChanged()
     }
-}
 
-class RateViewHolder(parent: ViewGroup, val onClick: (position: Int) -> Unit) :
-    RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.rate_item, parent, false)
-    ) {
+    inner class RateViewHolder(parent: ViewGroup, val onClick: (position: Int) -> Unit) :
+        RecyclerView.ViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.rate_item, parent, false)
+        ) {
 
-    fun bind(position: Int, item: Rate) {
-        itemView.apply {
-            rate.text = item.first
-            value.text = item.getRate()
-            setOnClickListener {
-                onClick(position)
+        fun bind(position: Int, item: Rate) {
+            itemView.apply {
+                rate.text = item.getCurrency()
+                value.setText(item.getRate())
+                setOnClickListener {
+                    onClick(position)
+                }
+                if (position == 0) {
+                    value.afterTextChanged { fieldValue ->
+                        // logic
+                        fieldValue.toFloat().apply {
+                           // update values
+                            notifyDataSetChanged()
+                        }
+                    }
+                }
             }
         }
     }
 }
+
+

@@ -7,7 +7,7 @@ import io.reactivex.Observable
 
 class RatesInteractorImpl(private val dataService: DataService) : RatesInteractor {
 
-    override fun fetchRates(): Observable<RatesMap> =
-        dataService.fetchRates()
+    override fun fetchRates(base: String): Observable<RatesMap> =
+        dataService.fetchRates(base)
             .map { it.rates }
 }
