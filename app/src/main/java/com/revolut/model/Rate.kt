@@ -1,15 +1,15 @@
 package com.revolut.model
 
-typealias Rate = Pair<String, Float>
+typealias Rate = Pair<String, Double>
 
 fun Rate.currency(): String =
     this.first
 
 fun Rate.rateText(): String =
-    this.second.toString()
+    "%.2f".format(this.second)
 
-fun Rate.rateValue(): Float =
+fun Rate.rateValue(): Double =
     this.second
 
-fun Rate.rateValue(base: Rate): Float =
+fun Rate.rateValue(base: Rate): Double =
     this.rateValue()*base.rateValue()

@@ -31,9 +31,10 @@ class RatesViewModelTest {
     var ratesMap: RatesMap = LinkedTreeMap()
 
     init {
-        ratesMap["r1"] = 1F
-        ratesMap["r2"] = 2F
+        ratesMap["r1"] = 1.0
+        ratesMap["r2"] = 2.0
     }
+
     @Before
     fun before() {
         whenever(ratesInteractor.fetchRates(any())).thenReturn(Observable.just(ratesMap))
@@ -64,7 +65,7 @@ class RatesViewModelTest {
         testScheduler.triggerActions()
         viewModel.setNewValue("2")
 
-        val expected = listOf(Pair("EUR", 2.0F), Pair("r1", 2.0F), Pair("r2", 4.0F))
+        val expected = mutableListOf(Pair("EUR", 2.0), Pair("r1", 2.0), Pair("r2", 4.0))
         assertEquals(expected, viewModel.rates.value)
     }
 
@@ -73,7 +74,16 @@ class RatesViewModelTest {
         testScheduler.triggerActions()
         viewModel.setNewValue("")
 
-        val expected = listOf(Pair("EUR", 0F), Pair("r1", 0F), Pair("r2", 0F))
+        val expected = listOf(Pair("EUR", 0.0), Pair("r1", 0.0), Pair("r2", 0.0))
+        assertEquals(expected, viewModel.rates.value)
+    }
+
+    @Test
+    fun `select new item should update first`() {
+        testScheduler.triggerActions()
+        viewModel.selectItem(1)
+
+        val expected = listOf(Pair("r1", 1.0), Pair("EUR", 1.0), Pair("r2", 2.0))
         assertEquals(expected, viewModel.rates.value)
     }
 }

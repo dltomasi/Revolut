@@ -17,10 +17,11 @@ class RatesViewModel @Inject constructor(
     private val ratesInteractor: RatesInteractor
 ) : BaseViewModel() {
 
+    var originalRates = mutableListOf<Rate>()
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<String>()
 
-    var first: Rate = START_CURRENCY
+    private var first: Rate = START_CURRENCY
 
     init {
         getRates()
@@ -33,6 +34,7 @@ class RatesViewModel @Inject constructor(
                 .flatMap {
                     ratesInteractor.fetchRates(first.currency())
                         .map { it.toList() }
+                        .doOnNext{originalRates = it.toMutableList()}
                         .flatMapIterable { it }
                         .map { it.copy(second = it.rateValue(first)) }
                         .toList().toObservable()
@@ -55,12 +57,13 @@ class RatesViewModel @Inject constructor(
 
     fun setNewValue(value: String) {
         first = if (value.isEmpty()) {
-            first.copy(second = 0F)
+            first.copy(second = 0.0)
         } else {
-            first.copy(second = value.toFloat())
+            first.copy(second = value.toDouble())
         }
-        rates.value =
-            rates.value!!.map { it.copy(second = it.rateValue(first) * first.rateValue(first)) }
+        val newList =  originalRates.map { it.copy(second = it.rateValue(first)) }.toMutableList()
+        newList.add(0, first)
+        rates.value = newList
     }
 
     fun selectItem(position: Int) {
@@ -74,8 +77,8 @@ class RatesViewModel @Inject constructor(
     }
 
     companion object {
-        const val TIME_INTERVAL = 1L
-        val START_CURRENCY = Pair("EUR", 1F)
+        const val TIME_INTERVAL = 3L
+        val START_CURRENCY = Pair("EUR", 1.0)
     }
 
 }

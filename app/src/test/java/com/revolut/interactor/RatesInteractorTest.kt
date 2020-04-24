@@ -20,8 +20,8 @@ class RatesInteractorTest {
     private var responseData: RatesResponse
 
     init {
-        ratesMap["r1"] = 1F
-        ratesMap["r2"] = 2F
+        ratesMap["r1"] = 1.0
+        ratesMap["r2"] = 2.0
         responseData = RatesResponse(
             "base",
             ratesMap)

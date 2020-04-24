@@ -32,7 +32,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
     }
 
     fun setData(rates: List<Rate>) {
-        val first = if (items.isEmpty()) Rate("", 0F) else items[0]
+        val first = if (items.isEmpty()) Rate("", 0.0) else items[0]
         items = rates.toMutableList()
         if (first.currency() == rates[0].currency())
             // to avoid changing focus on edit text

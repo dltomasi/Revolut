@@ -16,7 +16,7 @@ class RatesAdapterTest {
     var rule: TestRule = InstantTaskExecutorRule()
 
     private lateinit var adapter: RatesAdapter
-    private var rates: List<Rate> = listOf(Pair("r1", 1F), Pair("r2", 2F))
+    private var rates: List<Rate> = listOf(Pair("r1", 1.0), Pair("r2", 2.0))
 
     @Before
     fun before() {
