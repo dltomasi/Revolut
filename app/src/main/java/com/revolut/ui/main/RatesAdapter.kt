@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.revolut.R
-import com.revolut.afterTextChanged
+import com.revolut.rx.afterTextChanged
 import com.revolut.model.Rate
-import com.revolut.model.getCurrency
-import com.revolut.model.getRate
+import com.revolut.model.currency
+import com.revolut.model.rateText
 import kotlinx.android.synthetic.main.rate_item.view.*
 
 class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
@@ -34,7 +34,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
     fun setData(rates: List<Rate>) {
         val first = if (items.isEmpty()) Rate("", 0F) else items[0]
         items = rates.toMutableList()
-        if (first.getCurrency() == rates[0].getCurrency())
+        if (first.currency() == rates[0].currency())
             // to avoid changing focus on edit text
             notifyItemRangeChanged(1, items.size - 1)
         else notifyDataSetChanged()
@@ -46,10 +46,11 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
         ) {
 
         private var listenerText: TextWatcher? = null
+
         fun bind(position: Int, item: Rate) {
             itemView.apply {
-                rate.text = item.getCurrency()
-                value.setText(item.getRate())
+                rate.text = item.currency()
+                value.setText(item.rateText())
                 setOnClickListener {
                     onClick(position)
                 }
@@ -58,7 +59,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                 if (position == 0) {
                     listenerText = value.afterTextChanged { fieldValue ->
                         // avoid error when recycling view
-                        if (rate.text == item.getCurrency()) {
+                        if (rate.text == item.currency()) {
                             clickListener.onValueChanged(fieldValue)
                         }
                     }

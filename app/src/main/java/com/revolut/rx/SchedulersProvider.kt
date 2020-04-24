@@ -1,4 +1,4 @@
-package com.revolut
+package com.revolut.rx
 
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers

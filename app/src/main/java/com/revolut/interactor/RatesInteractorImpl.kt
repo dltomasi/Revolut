@@ -1,7 +1,7 @@
 package com.revolut.interactor
 
 
-import com.revolut.RatesMap
+import com.revolut.rx.RatesMap
 import com.revolut.network.DataService
 import io.reactivex.Observable
 

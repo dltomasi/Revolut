@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.revolut.network.WebClient
 import com.revolut.R
-import com.revolut.SchedulersProvider
+import com.revolut.rx.SchedulersProvider
 import com.revolut.interactor.RatesInteractorImpl
 import com.revolut.model.Rate
 import kotlinx.android.synthetic.main.main_fragment.*

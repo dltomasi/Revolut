@@ -1,13 +1,13 @@
 package com.revolut.ui.main
 
 import androidx.lifecycle.MutableLiveData
-import com.revolut.SchedulersProvider
+import com.revolut.rx.SchedulersProvider
 import com.revolut.interactor.RatesInteractor
 import com.revolut.model.Rate
-import com.revolut.model.getCurrency
-import com.revolut.model.getRateValue
+import com.revolut.model.currency
+import com.revolut.model.rateValue
 import com.revolut.ui.BaseViewModel
-import com.revolut.uiSubscribe
+import com.revolut.rx.uiSubscribe
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -31,10 +31,10 @@ class RatesViewModel @Inject constructor(
             Observable
                 .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
                 .flatMap {
-                    ratesInteractor.fetchRates(first.getCurrency())
+                    ratesInteractor.fetchRates(first.currency())
                         .map { it.toList() }
                         .flatMapIterable { it }
-                        .map { it.copy(second = it.getRateValue() * first.getRateValue()) }
+                        .map { it.copy(second = it.rateValue(first)) }
                         .toList().toObservable()
                 }
                 .uiSubscribe(scheduler)
@@ -60,14 +60,14 @@ class RatesViewModel @Inject constructor(
             first.copy(second = value.toFloat())
         }
         rates.value =
-            rates.value!!.map { it.copy(second = it.getRateValue() * first.getRateValue()) }
+            rates.value!!.map { it.copy(second = it.rateValue(first) * first.rateValue(first)) }
     }
 
     fun selectItem(position: Int) {
         first = rates.value!![position]
         val newList =
             rates.value!!
-                .filter { it.getCurrency() != first.getCurrency() }
+                .filter { it.currency() != first.currency() }
                 .toMutableList()
         newList.add(0, first)
         rates.value = newList

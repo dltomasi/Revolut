@@ -1,11 +1,10 @@
-package com.revolut
+package com.revolut.rx
 
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import com.google.gson.internal.LinkedTreeMap
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
 typealias RatesMap = LinkedTreeMap<String, Float>

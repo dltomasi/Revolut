@@ -3,10 +3,9 @@ package com.revolut.ui.main
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.gson.internal.LinkedTreeMap
 import com.nhaarman.mockito_kotlin.*
-import com.revolut.RatesMap
+import com.revolut.rx.RatesMap
 import com.revolut.TestSchedulerProvider
 import com.revolut.interactor.RatesInteractor
-import com.revolut.model.Rate
 import com.revolut.ui.main.RatesViewModel.Companion.START_CURRENCY
 import com.revolut.ui.main.RatesViewModel.Companion.TIME_INTERVAL
 import io.reactivex.Observable
