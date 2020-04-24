@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.global.test.globaltest.network.WebClient
 import com.revolut.R
@@ -24,17 +25,22 @@ class RatesFragment : Fragment() {
     private lateinit var viewModel: RatesViewModel
     private val adapter = RatesAdapter()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         return inflater.inflate(R.layout.main_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         //viewModel = ViewModelProviders.of(this).get(RatesViewModel::class.java)
-        viewModel = RatesViewModel(SchedulersProvider.Impl(), RatesInteractorImpl(WebClient().dataService()))
+        viewModel = RatesViewModel(
+            SchedulersProvider.Impl(),
+            RatesInteractorImpl(WebClient().dataService())
+        )
         setUpList()
-
+        errorObserver()
     }
 
     private fun setUpList() {
@@ -42,7 +48,7 @@ class RatesFragment : Fragment() {
 
         adapter.listListener = object : RateListListener {
             override fun onValueChanged(value: String) {
-                    viewModel.setNewValue(value)
+                viewModel.setNewValue(value)
             }
 
             override fun onItemSelected(position: Int) {
@@ -57,6 +63,14 @@ class RatesFragment : Fragment() {
         }
 
         viewModel.rates.observe(viewLifecycleOwner, ratesObserver)
+    }
+
+    private fun errorObserver() {
+        val ratesObserver = Observer<String> { error ->
+            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.error.observe(viewLifecycleOwner, ratesObserver)
     }
 
 }

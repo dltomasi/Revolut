@@ -22,6 +22,7 @@ class RatesViewModel @Inject constructor(
 //    }
 
     val rates = MutableLiveData<List<Rate>>()
+    val error = MutableLiveData<String>()
 
     var first: Rate = START_CURRENCY
 
@@ -51,8 +52,9 @@ class RatesViewModel @Inject constructor(
         )
     }
 
-    private fun handleError(error: Throwable) {
-        error.printStackTrace()
+    private fun handleError(e: Throwable) {
+        e.printStackTrace()
+        error.value = e.localizedMessage
     }
 
     fun setNewValue(value: String) {
