@@ -1,11 +1,11 @@
 package com.revolut.ui.main
 
+import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.revolut.R
-import com.revolut.RatesMap
 import com.revolut.afterTextChanged
 import com.revolut.model.Rate
 import com.revolut.model.getCurrency
@@ -14,17 +14,13 @@ import kotlinx.android.synthetic.main.rate_item.view.*
 
 class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
 
-    private var items = emptyList<Rate>()
+    private var items = mutableListOf<Rate>()
     lateinit var listListener: RateListListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RateViewHolder {
         return RateViewHolder(parent) {
-            items.apply {
-                // send to top
-//                selected.value = removeAt(it)
-//                add(0, selected.value!!)
-                notifyDataSetChanged()
-            }
+            items.add(0, items[it])
+            listListener.onItemSelected(it)
         }
     }
 
@@ -35,11 +31,12 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
     }
 
 
-
     fun setData(rates: List<Rate>) {
-        items = rates
-        notifyItemRangeChanged(1, items.size - 1)
-        //notifyDataSetChanged()
+        val first = if (items.isEmpty()) Rate("", 0F) else items[0]
+        items = rates.toMutableList()
+        if (first.getCurrency() == rates[0].getCurrency())
+            notifyItemRangeChanged(1, items.size - 1)
+        else notifyDataSetChanged()
     }
 
     inner class RateViewHolder(parent: ViewGroup, val onClick: (position: Int) -> Unit) :
@@ -47,6 +44,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
             LayoutInflater.from(parent.context).inflate(R.layout.rate_item, parent, false)
         ) {
 
+        private var listenerText: TextWatcher? = null
         fun bind(position: Int, item: Rate) {
             itemView.apply {
                 rate.text = item.getCurrency()
@@ -54,11 +52,16 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                 setOnClickListener {
                     onClick(position)
                 }
+                value.removeTextChangedListener(listenerText)
                 if (position == 0) {
-                    value.afterTextChanged { fieldValue ->
-                        // logic
-                        listListener.onValueChanged(fieldValue)
+                    // Log.e("abc", "$position ${item.getCurrency()}")
 
+                    listenerText = value.afterTextChanged { fieldValue ->
+                        // avoid error when recycling view
+                        if (rate.text == item.getCurrency()) {
+                            listListener.onValueChanged(fieldValue)
+                            //Log.e("abc", "${rate.text} ${rate.value} $fieldValue")
+                        }
                     }
                 }
             }

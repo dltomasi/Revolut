@@ -65,6 +65,16 @@ class RatesViewModel @Inject constructor(
             rates.value!!.map { it.copy(second = it.getRateValue() * first.getRateValue()) }
     }
 
+    fun selectItem(position: Int) {
+        first = rates.value!![position]
+        val newList =
+            rates.value!!
+                .filter { it.getCurrency() != first.getCurrency() }
+                .toMutableList()
+        newList.add(0, first)
+        rates.value = newList
+    }
+
     companion object {
         const val TIME_INTERVAL = 1L
         val START_CURRENCY = Pair("EUR", 1F)

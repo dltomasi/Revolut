@@ -18,13 +18,9 @@ fun <T> Observable<T>.backgroundSubscribe(): Observable<T> {
     return subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
 }
 
-fun <T> Single<T>.singleUiSubscribe(schedulers: SchedulersProvider): Single<T> {
-    return subscribeOn(schedulers.background).observeOn(schedulers.main)
-}
 
-
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
+fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) : TextWatcher {
+    val watcher = object : TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
         }
 
@@ -34,5 +30,7 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         override fun afterTextChanged(editable: Editable?) {
             afterTextChanged.invoke(editable.toString())
         }
-    })
+    }
+    this.addTextChangedListener(watcher)
+    return watcher
 }

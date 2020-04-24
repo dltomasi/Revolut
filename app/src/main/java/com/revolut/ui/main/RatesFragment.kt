@@ -33,7 +33,6 @@ class RatesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         //viewModel = ViewModelProviders.of(this).get(RatesViewModel::class.java)
         viewModel = RatesViewModel(SchedulersProvider.Impl(), RatesInteractorImpl(WebClient().dataService()))
-        // TODO: Use the ViewModel
         setUpList()
 
     }
@@ -45,19 +44,19 @@ class RatesFragment : Fragment() {
             override fun onValueChanged(value: String) {
                     viewModel.setNewValue(value)
             }
+
+            override fun onItemSelected(position: Int) {
+                viewModel.selectItem(position)
+            }
         }
 
         val ratesObserver = Observer<List<Rate>> { rates ->
-            adapter.setData(rates)
+            if (!rates_list.isComputingLayout) {
+                adapter.setData(rates)
+            }
         }
 
         viewModel.rates.observe(viewLifecycleOwner, ratesObserver)
-
-//        val selectedObserver = Observer<Rate> { rate ->
-//            viewModel.base = rate.getCurrency()
-//        }
-//
-//        adapter.selected.observe(viewLifecycleOwner, selectedObserver)
     }
 
 }
