@@ -17,10 +17,6 @@ class RatesViewModel @Inject constructor(
     private val ratesInteractor: RatesInteractor
 ) : BaseViewModel() {
 
-//    val rates: MutableLiveData<List<Rate>> by lazy {
-//        MutableLiveData<List<Rate>>()
-//    }
-
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<String>()
 

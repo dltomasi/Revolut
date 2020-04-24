@@ -20,7 +20,8 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RateViewHolder {
         return RateViewHolder(parent) {
             items.add(0, items.removeAt(it))
-            notifyItemChanged(0)
+            //notifyItemChanged(0)
+            notifyItemMoved(it, 0)
             listListener.onItemSelected(it)
         }
     }
@@ -53,9 +54,9 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                 setOnClickListener {
                     onClick(position)
                 }
+                value.isEnabled = position == 0
                 value.removeTextChangedListener(listenerText)
                 if (position == 0) {
-
                     listenerText = value.afterTextChanged { fieldValue ->
                         // avoid error when recycling view
                         if (rate.text == item.getCurrency()) {

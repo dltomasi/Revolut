@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.global.test.globaltest.network.WebClient
 import com.revolut.R
 import com.revolut.RatesMap
@@ -52,6 +53,9 @@ class RatesFragment : Fragment() {
             }
 
             override fun onItemSelected(position: Int) {
+                //rates_list.layoutManager?.smoothScrollToPosition(rates_list, null,0)
+                //rates_list.smoothScrollToPosition(0)
+                rates_list.scrollToPosition(0)
                 viewModel.selectItem(position)
             }
         }
