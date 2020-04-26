@@ -1,11 +1,11 @@
-package com.revolut.ui.main
+package com.revolut.ui.rate
 
 import androidx.lifecycle.MutableLiveData
 import com.revolut.rx.SchedulersProvider
-import com.revolut.interactor.RatesInteractor
-import com.revolut.model.Rate
-import com.revolut.model.currency
-import com.revolut.model.rateValue
+import com.revolut.rate.interactor.RatesInteractor
+import com.revolut.rate.model.Rate
+import com.revolut.rate.model.currency
+import com.revolut.rate.model.rateValue
 import com.revolut.ui.BaseViewModel
 import com.revolut.rx.uiSubscribe
 import io.reactivex.Observable
@@ -21,7 +21,8 @@ class RatesViewModel @Inject constructor(
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<String>()
 
-    private var first: Rate = START_CURRENCY
+    private var first: Rate =
+        START_CURRENCY
 
     init {
         getRates()
@@ -30,7 +31,8 @@ class RatesViewModel @Inject constructor(
     private fun getRates() {
         addReaction(
             Observable
-                .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
+                .interval(0,
+                    TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
                 .flatMap {
                     ratesInteractor.fetchRates(first.currency())
                         .map { it.toList() }

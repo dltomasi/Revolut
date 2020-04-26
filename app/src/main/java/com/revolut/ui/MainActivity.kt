@@ -3,7 +3,7 @@ package com.revolut.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.revolut.R
-import com.revolut.ui.main.RatesFragment
+import com.revolut.ui.rate.RatesFragment
 
 class MainActivity : AppCompatActivity() {
 

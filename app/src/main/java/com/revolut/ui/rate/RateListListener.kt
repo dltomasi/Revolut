@@ -1,4 +1,4 @@
-package com.revolut.ui.main
+package com.revolut.ui.rate
 
 interface RateListListener {
     fun onValueChanged(value: String)

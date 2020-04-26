@@ -1,11 +1,10 @@
-package com.revolut.network
+package com.revolut.rate.network
 
-import com.revolut.model.RatesResponse
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface DataService {
+interface RateService {
 
     @GET("latest")
     fun fetchRates(@Query("base") one: String) : Observable<RatesResponse>

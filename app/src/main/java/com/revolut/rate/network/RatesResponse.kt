@@ -1,4 +1,4 @@
-package com.revolut.model
+package com.revolut.rate.network
 
 import com.revolut.rx.RatesMap
 

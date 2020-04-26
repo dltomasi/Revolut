@@ -1,4 +1,4 @@
-package com.revolut.ui.main
+package com.revolut.ui.rate
 
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.revolut.R
 import com.revolut.rx.afterTextChanged
-import com.revolut.model.Rate
-import com.revolut.model.currency
-import com.revolut.model.rateText
+import com.revolut.rate.model.Rate
+import com.revolut.rate.model.currency
+import com.revolut.rate.model.rateText
 import kotlinx.android.synthetic.main.rate_item.view.*
 
 class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
@@ -32,7 +32,10 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
     }
 
     fun setData(rates: List<Rate>) {
-        val first = if (items.isEmpty()) Rate("", 0.0) else items[0]
+        val first = if (items.isEmpty()) Rate(
+            "",
+            0.0
+        ) else items[0]
         items = rates.toMutableList()
         if (first.currency() == rates[0].currency())
             // to avoid changing focus on edit text

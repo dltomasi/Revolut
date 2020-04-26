@@ -1,4 +1,4 @@
-package com.revolut.interactor
+package com.revolut.rate.interactor
 
 
 import com.revolut.rx.RatesMap

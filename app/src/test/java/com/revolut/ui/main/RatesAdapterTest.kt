@@ -1,7 +1,8 @@
 package com.revolut.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.revolut.model.Rate
+import com.revolut.rate.model.Rate
+import com.revolut.ui.rate.RatesAdapter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Ignore

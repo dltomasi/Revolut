@@ -4,9 +4,11 @@ import com.google.gson.internal.LinkedTreeMap
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import com.revolut.rate.interactor.RatesInteractor
+import com.revolut.rate.interactor.RatesInteractorImpl
 import com.revolut.rx.RatesMap
-import com.revolut.model.RatesResponse
-import com.revolut.network.DataService
+import com.revolut.rate.network.RatesResponse
+import com.revolut.rate.network.RateService
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
@@ -15,7 +17,7 @@ class RatesInteractorTest {
 
     private lateinit var subject: RatesInteractor
 
-    private val mockDataService: DataService = mock()
+    private val mockRateService: RateService = mock()
     var ratesMap: RatesMap = LinkedTreeMap()
     private var responseData: RatesResponse
 
@@ -24,13 +26,15 @@ class RatesInteractorTest {
         ratesMap["r2"] = 2.0
         responseData = RatesResponse(
             "base",
-            ratesMap)
+            ratesMap
+        )
     }
 
     @Before
     fun before(){
-        whenever(mockDataService.fetchRates(any())).thenReturn(Observable.just(responseData))
-        subject = RatesInteractorImpl(mockDataService)
+        whenever(mockRateService.fetchRates(any())).thenReturn(Observable.just(responseData))
+        subject =
+            RatesInteractorImpl(mockRateService)
     }
 
     @Test

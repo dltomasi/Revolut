@@ -5,9 +5,10 @@ import com.google.gson.internal.LinkedTreeMap
 import com.nhaarman.mockito_kotlin.*
 import com.revolut.rx.RatesMap
 import com.revolut.TestSchedulerProvider
-import com.revolut.interactor.RatesInteractor
-import com.revolut.ui.main.RatesViewModel.Companion.START_CURRENCY
-import com.revolut.ui.main.RatesViewModel.Companion.TIME_INTERVAL
+import com.revolut.rate.interactor.RatesInteractor
+import com.revolut.ui.rate.RatesViewModel
+import com.revolut.ui.rate.RatesViewModel.Companion.START_CURRENCY
+import com.revolut.ui.rate.RatesViewModel.Companion.TIME_INTERVAL
 import io.reactivex.Observable
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert.assertEquals
@@ -38,7 +39,10 @@ class RatesViewModelTest {
     @Before
     fun before() {
         whenever(ratesInteractor.fetchRates(any())).thenReturn(Observable.just(ratesMap))
-        viewModel = RatesViewModel(schedulersProvider, ratesInteractor)
+        viewModel = RatesViewModel(
+            schedulersProvider,
+            ratesInteractor
+        )
     }
 
     @Test

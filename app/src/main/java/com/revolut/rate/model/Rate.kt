@@ -1,4 +1,4 @@
-package com.revolut.model
+package com.revolut.rate.model
 
 typealias Rate = Pair<String, Double>
 
