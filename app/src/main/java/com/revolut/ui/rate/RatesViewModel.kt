@@ -4,15 +4,12 @@ import androidx.lifecycle.MutableLiveData
 import com.revolut.rx.SchedulersProvider
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
-import com.revolut.rate.model.currency
-import com.revolut.rate.model.rateValue
 import com.revolut.ui.BaseViewModel
-import com.revolut.rx.uiSubscribe
+import com.revolut.uiSubscribe
 import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class RatesViewModel @Inject constructor(
+class RatesViewModel constructor(
     private val scheduler: SchedulersProvider,
     private val ratesInteractor: RatesInteractor
 ) : BaseViewModel() {
@@ -34,11 +31,14 @@ class RatesViewModel @Inject constructor(
                 .interval(0,
                     TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
                 .flatMap {
-                    ratesInteractor.fetchRates(first.currency())
+                    ratesInteractor.fetchRates(first.currency)
                         .map { it.toList() }
                         .doOnNext{originalRates = it.toMutableList()}
                         .flatMapIterable { it }
-                        .map { it.copy(second = it.rateValue(first)) }
+                        .map {
+                            it.rate = it.rateValue(first)
+                            it
+                        }
                         .toList().toObservable()
                 }
                 .uiSubscribe(scheduler)
@@ -58,12 +58,16 @@ class RatesViewModel @Inject constructor(
     }
 
     fun setNewValue(value: String) {
-        first = if (value.isEmpty()) {
-            first.copy(second = 0.0)
+         if (value.isEmpty()) {
+            first.rate = 0.0
         } else {
-            first.copy(second = value.toDouble())
+            first.rate = value.toDouble()
         }
-        val newList =  originalRates.map { it.copy(second = it.rateValue(first)) }.toMutableList()
+        val newList =  originalRates
+            .map {
+                it.rate = it.rateValue(first)
+                it
+            }.toMutableList()
         newList.add(0, first)
         rates.value = newList
     }
@@ -72,7 +76,7 @@ class RatesViewModel @Inject constructor(
         first = rates.value!![position]
         val newList =
             rates.value!!
-                .filter { it.currency() != first.currency() }
+                .filter { it.currency != first.currency }
                 .toMutableList()
         newList.add(0, first)
         rates.value = newList
@@ -80,7 +84,7 @@ class RatesViewModel @Inject constructor(
 
     companion object {
         const val TIME_INTERVAL = 3L
-        val START_CURRENCY = Pair("EUR", 1.0)
+        val START_CURRENCY = Rate("EUR", 1.0)
     }
 
 }

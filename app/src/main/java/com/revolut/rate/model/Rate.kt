@@ -1,15 +1,21 @@
 package com.revolut.rate.model
 
-typealias Rate = Pair<String, Double>
+class Rate(
+    val currency: String,
+    var rate: Double,
+    val flag: String? = ""
+) {
 
-fun Rate.currency(): String =
-    this.first
+    fun rateText(): String = "%.2f".format(rate)
 
-fun Rate.rateText(): String =
-    "%.2f".format(this.second)
+    fun rateValue(base: Rate): Double =
+        this.rate * base.rate
 
-fun Rate.rateValue(): Double =
-    this.second
+    override fun equals(other: Any?): Boolean {
+        other as Rate
+        return this.currency == other.currency
+                && this.rate == other.rate
+    }
+}
 
-fun Rate.rateValue(base: Rate): Double =
-    this.rateValue()*base.rateValue()
+

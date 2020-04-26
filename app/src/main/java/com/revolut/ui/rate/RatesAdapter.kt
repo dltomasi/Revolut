@@ -5,10 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.revolut.R
-import com.revolut.rx.afterTextChanged
+import com.revolut.afterTextChanged
 import com.revolut.rate.model.Rate
-import com.revolut.rate.model.currency
-import com.revolut.rate.model.rateText
 import kotlinx.android.synthetic.main.rate_item.view.*
 
 class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
@@ -37,7 +35,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
             0.0
         ) else items[0]
         items = rates.toMutableList()
-        if (first.currency() == rates[0].currency())
+        if (first.currency == rates[0].currency)
             // to avoid changing focus on edit text
             notifyItemRangeChanged(1, items.size - 1)
         else notifyDataSetChanged()
@@ -52,7 +50,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
 
         fun bind(position: Int, item: Rate) {
             itemView.apply {
-                rate.text = item.currency()
+                rate.text = item.currency
                 value.setText(item.rateText())
                 setOnClickListener {
                     onClick(position)
@@ -62,7 +60,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                 if (position == 0) {
                     listenerText = value.afterTextChanged { fieldValue ->
                         // avoid error when recycling view
-                        if (rate.text == item.currency()) {
+                        if (rate.text == item.currency) {
                             clickListener.onValueChanged(fieldValue)
                         }
                     }

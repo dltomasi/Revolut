@@ -1,6 +1,6 @@
 package com.revolut.rate.network
 
-import com.revolut.rx.RatesMap
+import com.revolut.RatesMap
 
 data class RatesResponse(
     val baseCurrency: String,

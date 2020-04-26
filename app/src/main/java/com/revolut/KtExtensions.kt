@@ -1,9 +1,10 @@
-package com.revolut.rx
+package com.revolut
 
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import com.google.gson.internal.LinkedTreeMap
+import com.revolut.rx.SchedulersProvider
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 

@@ -6,7 +6,8 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.interactor.RatesInteractorImpl
-import com.revolut.rx.RatesMap
+import com.revolut.rate.model.Rate
+import com.revolut.RatesMap
 import com.revolut.rate.network.RatesResponse
 import com.revolut.rate.network.RateService
 import io.reactivex.Observable
@@ -20,6 +21,7 @@ class RatesInteractorTest {
     private val mockRateService: RateService = mock()
     var ratesMap: RatesMap = LinkedTreeMap()
     private var responseData: RatesResponse
+    private val rates = listOf(Rate("r1" ,1.0), Rate("r2", 2.0))
 
     init {
         ratesMap["r1"] = 1.0
@@ -40,6 +42,6 @@ class RatesInteractorTest {
     @Test
     fun `fetch data should succeed`(){
         subject.fetchRates("").test()
-            .assertValue(responseData.rates)
+            .assertValue(rates)
     }
 }
