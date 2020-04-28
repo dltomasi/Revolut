@@ -3,6 +3,7 @@ package com.revolut.ui.main
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.nhaarman.mockito_kotlin.*
 import com.revolut.TestSchedulerProvider
+import com.revolut.country.interactor.CountryInteractor
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
 import com.revolut.ui.rate.RatesViewModel
@@ -28,6 +29,7 @@ class RatesViewModelTest {
     lateinit var viewModel: RatesViewModel
 
     private val ratesInteractor: RatesInteractor = mock()
+    private val countryInteractor: CountryInteractor = mock()
     private val testScheduler = TestScheduler()
     private val schedulersProvider = TestSchedulerProvider(testScheduler)
     private val rates = listOf(Rate("r1", 1.0), Rate("r2", 2.0))
@@ -36,9 +38,11 @@ class RatesViewModelTest {
     @Before
     fun before() {
         whenever(ratesInteractor.fetchRates(any())).thenReturn(Observable.just(rates))
+        whenever(countryInteractor.getCountry(any())).thenReturn(Observable.just(mock()))
         viewModel = RatesViewModel(
             schedulersProvider,
-            ratesInteractor
+            ratesInteractor,
+            countryInteractor
         )
     }
 
@@ -61,7 +65,8 @@ class RatesViewModelTest {
         verify(ratesInteractor, times(3)).fetchRates(any())
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     fun `set empty value should update list with zeros`() {
         testScheduler.triggerActions()
         viewModel.setNewValue("")

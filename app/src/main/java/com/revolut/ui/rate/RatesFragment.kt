@@ -1,5 +1,6 @@
 package com.revolut.ui.rate
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +10,9 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.revolut.rate.network.RateWebClient
 import com.revolut.R
+import com.revolut.country.interactor.CountryInteractorImpl
+import com.revolut.country.network.CountryWebClient
+import com.revolut.country.persistence.CountryPersistence
 import com.revolut.rx.SchedulersProvider
 import com.revolut.rate.interactor.RatesInteractorImpl
 import com.revolut.rate.model.Rate
@@ -35,7 +39,9 @@ class RatesFragment : Fragment() {
         //viewModel = ViewModelProviders.of(this).get(RatesViewModel::class.java)
         viewModel = RatesViewModel(
             SchedulersProvider.Impl(),
-            RatesInteractorImpl(RateWebClient().dataService())
+            RatesInteractorImpl(RateWebClient().rateService()),
+            CountryInteractorImpl(CountryWebClient().countryService(),
+                CountryPersistence(context!!.getSharedPreferences("MyVariables", Context.MODE_PRIVATE)))
         )
         setUpList()
         errorObserver()

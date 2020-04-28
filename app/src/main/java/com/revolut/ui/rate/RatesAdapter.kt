@@ -1,9 +1,11 @@
 package com.revolut.ui.rate
 
+import android.net.Uri
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.revolut.R
 import com.revolut.afterTextChanged
 import com.revolut.rate.model.Rate
@@ -36,7 +38,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
         ) else items[0]
         items = rates.toMutableList()
         if (first.currency == rates[0].currency)
-            // to avoid changing focus on edit text
+        // to avoid changing focus on edit text
             notifyItemRangeChanged(1, items.size - 1)
         else notifyDataSetChanged()
     }
@@ -64,6 +66,14 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                             clickListener.onValueChanged(fieldValue)
                         }
                     }
+                }
+                item.flag?.let {
+                    GlideToVectorYou
+                        .init()
+                        .with(this.context)
+                        .load(Uri.parse(it), flag)
+                } ?: run {
+                    flag.setImageResource(android.R.drawable.ic_menu_upload)
                 }
             }
         }

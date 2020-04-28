@@ -1,6 +1,7 @@
 package com.revolut.ui.rate
 
 import androidx.lifecycle.MutableLiveData
+import com.revolut.country.interactor.CountryInteractor
 import com.revolut.rx.SchedulersProvider
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
@@ -11,7 +12,8 @@ import java.util.concurrent.TimeUnit
 
 class RatesViewModel constructor(
     private val scheduler: SchedulersProvider,
-    private val ratesInteractor: RatesInteractor
+    private val ratesInteractor: RatesInteractor,
+    private val countryInteractor: CountryInteractor
 ) : BaseViewModel() {
 
     var originalRates = mutableListOf<Rate>()
@@ -28,13 +30,23 @@ class RatesViewModel constructor(
     private fun getRates() {
         addReaction(
             Observable
-                .interval(0,
-                    TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
+                .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
                 .flatMap {
                     ratesInteractor.fetchRates(first.currency)
                         .map { it.toList() }
-                        .doOnNext{originalRates = it.toMutableList()}
+                        .doOnNext { originalRates = it.toMutableList() }
                         .flatMapIterable { it }
+                        .flatMap { rate ->
+                            if (rate.flag.isNullOrEmpty()) {
+                                countryInteractor.getCountry(rate.currency)
+                                    .map {
+                                        rate.flag = it.flag
+                                        rate
+                                    }
+                            } else {
+                                Observable.just(rate)
+                            }
+                        }
                         .map {
                             it.rate = it.rateValue(first)
                             it
@@ -58,12 +70,12 @@ class RatesViewModel constructor(
     }
 
     fun setNewValue(value: String) {
-         if (value.isEmpty()) {
+        if (value.isEmpty()) {
             first.rate = 0.0
         } else {
             first.rate = value.toDouble()
         }
-        val newList =  originalRates
+        val newList = originalRates
             .map {
                 it.rate = it.rateValue(first)
                 it

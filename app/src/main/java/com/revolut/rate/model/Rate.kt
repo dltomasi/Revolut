@@ -3,7 +3,7 @@ package com.revolut.rate.model
 class Rate(
     val currency: String,
     var rate: Double,
-    val flag: String? = ""
+    var flag: String? = null
 ) {
 
     fun rateText(): String = "%.2f".format(rate)

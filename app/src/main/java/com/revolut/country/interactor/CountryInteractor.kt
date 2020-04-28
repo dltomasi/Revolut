@@ -6,5 +6,5 @@ import io.reactivex.Observable
 
 interface CountryInteractor {
 
-    fun fetchCountry(base: String): Observable<Country>
+    fun getCountry(base: String): Observable<Country>
 }

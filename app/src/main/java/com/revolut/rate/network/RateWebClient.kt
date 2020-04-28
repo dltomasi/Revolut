@@ -23,6 +23,6 @@ class RateWebClient {
     }
 
 
-    fun dataService(): RateService = retrofit.create(
+    fun rateService(): RateService = retrofit.create(
         RateService::class.java)
 }

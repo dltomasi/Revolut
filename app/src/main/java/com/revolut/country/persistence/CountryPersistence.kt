@@ -1,12 +1,31 @@
 package com.revolut.country.persistence
 
-class CountryPersistence {
+import android.content.SharedPreferences
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.revolut.country.model.Country
+import java.lang.reflect.Type
 
-    private val countries = hashMapOf<String, String>()
+class CountryPersistence(private val storage: SharedPreferences) {
 
-    fun get(code: String): String? = countries[code]
+    private val gson = Gson()
+    private var countries = mutableMapOf<String, Country>()
 
-    fun set(code: String, flag: String) {
-        countries[code] = flag
+    init {
+        val storedHashMapString: String = storage.getString(MAP_KEY, "")!!
+        val type: Type = object : TypeToken<HashMap<String?, Country?>?>() {}.type
+        if (!storedHashMapString.isNullOrEmpty())
+            countries = gson.fromJson(storedHashMapString, type)
+    }
+
+    fun get(code: String): Country? = countries[code]
+
+    fun set(code: String, country: Country) {
+        countries[code] = country
+        storage.edit().putString(MAP_KEY, gson.toJson(countries)).apply()
+    }
+
+    companion object {
+        const val MAP_KEY = "hashString"
     }
 }
