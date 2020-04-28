@@ -51,8 +51,12 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
 
     // Dependency Injection
-    implementation "com.google.dagger:dagger:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    def koin_version = '1.0.2'
+
+    // Koin for Android
+    implementation "org.koin:koin-android:$koin_version"
+    // or Koin for view model features
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
 
     // Test
     testImplementation 'junit:junit:4.13'

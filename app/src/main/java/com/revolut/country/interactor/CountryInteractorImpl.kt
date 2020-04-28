@@ -26,7 +26,7 @@ class CountryInteractorImpl(
 
     private fun getCorrectCountry(base:String, countries: List<CountryResponse>) : Country {
        return when (base) {
-            "EUR" -> Country("Euro", "")
+            "EUR" -> Country("Euro", "https://restcountries.eu/data/gbr.svg")
             "GBP" -> Country("British pound", "https://restcountries.eu/data/gbr.svg")
             "AUD" -> Country(countries[1].currencies[0].name, countries[1].flag)
             "USD" -> Country(countries[18].currencies[0].name, countries[18].flag)
