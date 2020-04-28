@@ -1,6 +1,7 @@
 package com.revolut.ui.rate
 
 import androidx.lifecycle.MutableLiveData
+import com.revolut.backgroundSubscribe
 import com.revolut.country.interactor.CountryInteractor
 import com.revolut.rx.SchedulersProvider
 import com.revolut.rate.interactor.RatesInteractor
@@ -16,7 +17,7 @@ class RatesViewModel constructor(
     private val countryInteractor: CountryInteractor
 ) : BaseViewModel() {
 
-    var originalRates = mutableListOf<Rate>()
+    private var originalRates = mutableListOf<Rate>()
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<String>()
 
@@ -28,6 +29,15 @@ class RatesViewModel constructor(
     }
 
     private fun getRates() {
+        if (first.country == null) {
+            addReaction(
+                countryInteractor.getCountry(first.currency)
+                    .backgroundSubscribe(scheduler)
+                    .subscribe {
+                        first.country = it
+                    }
+            )
+        }
         addReaction(
             Observable
                 .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
@@ -37,10 +47,10 @@ class RatesViewModel constructor(
                         .doOnNext { originalRates = it.toMutableList() }
                         .flatMapIterable { it }
                         .flatMap { rate ->
-                            if (rate.flag.isNullOrEmpty()) {
+                            if (rate.country == null) {
                                 countryInteractor.getCountry(rate.currency)
                                     .map {
-                                        rate.flag = it.flag
+                                        rate.country = it
                                         rate
                                     }
                             } else {
@@ -95,7 +105,7 @@ class RatesViewModel constructor(
     }
 
     companion object {
-        const val TIME_INTERVAL = 3L
+        const val TIME_INTERVAL = 5L
         val START_CURRENCY = Rate("EUR", 1.0)
     }
 

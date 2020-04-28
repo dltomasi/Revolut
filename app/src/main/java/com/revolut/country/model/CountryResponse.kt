@@ -6,3 +6,22 @@ data class Country(
     val flag: String
 )
 
+data class CountryResponse(
+    val currencies : List<CurrencyResponse>,
+    val flag: String
+)
+
+data class CurrencyResponse(
+    val name: String
+)
+
+/*
+"currencies":[
+         {
+            "code":"BRL",
+            "name":"Brazilian real",
+            "symbol":"R$"
+         }
+      ],
+ */
+

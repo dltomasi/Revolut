@@ -14,8 +14,8 @@ fun <T> Observable<T>.uiSubscribe(schedulers: SchedulersProvider): Observable<T>
     return subscribeOn(schedulers.background).observeOn(schedulers.main)
 }
 
-fun <T> Observable<T>.backgroundSubscribe(): Observable<T> {
-    return subscribeOn(Schedulers.io()).observeOn(Schedulers.io())
+fun <T> Observable<T>.backgroundSubscribe(schedulers: SchedulersProvider): Observable<T> {
+    return subscribeOn(schedulers.background).observeOn(schedulers.background)
 }
 
 

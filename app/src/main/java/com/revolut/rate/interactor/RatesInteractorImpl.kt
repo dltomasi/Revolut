@@ -12,6 +12,6 @@ class RatesInteractorImpl(private val rateService: RateService) :
         rateService.fetchRates(base)
             .map { it.rates.toList() }
             .flatMapIterable { it }
-            .map { Rate(it.first, it.second, "") }
+            .map { Rate(it.first, it.second, null) }
             .toList().toObservable()
 }

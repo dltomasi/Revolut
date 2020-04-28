@@ -12,9 +12,10 @@ class CountryPersistence(private val storage: SharedPreferences) {
     private var countries = mutableMapOf<String, Country>()
 
     init {
+       storage.edit().remove(MAP_KEY).apply() // DEBUG ONLY
         val storedHashMapString: String = storage.getString(MAP_KEY, "")!!
         val type: Type = object : TypeToken<HashMap<String?, Country?>?>() {}.type
-        if (!storedHashMapString.isNullOrEmpty())
+        if (storedHashMapString.isNotEmpty())
             countries = gson.fromJson(storedHashMapString, type)
     }
 

@@ -67,14 +67,18 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                         }
                     }
                 }
-                item.flag?.let {
+                item.country?.let { country ->
+                    name.text = country.name
                     GlideToVectorYou
                         .init()
                         .with(this.context)
-                        .load(Uri.parse(it), flag)
+                        .load(Uri.parse(country.flag), flag)
+
                 } ?: run {
                     flag.setImageResource(android.R.drawable.ic_menu_upload)
+                    name.text = "empty"
                 }
+
             }
         }
     }

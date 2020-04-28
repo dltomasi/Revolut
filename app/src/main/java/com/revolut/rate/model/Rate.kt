@@ -1,9 +1,11 @@
 package com.revolut.rate.model
 
+import com.revolut.country.model.Country
+
 class Rate(
     val currency: String,
     var rate: Double,
-    var flag: String? = null
+    var country: Country? = null
 ) {
 
     fun rateText(): String = "%.2f".format(rate)
