@@ -62,16 +62,16 @@ class RatesFragment : Fragment() {
     }
 
     private fun errorObserver() {
-        val ratesObserver = Observer<String> { error ->
-            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+        val ratesObserver = Observer<String> {
+            error_view.visibility = VISIBLE
         }
 
         viewModel.error.observe(viewLifecycleOwner, ratesObserver)
     }
 
     private fun progressObserver() {
-        val observer = Observer<Boolean> { progress ->
-            progress_bar.visibility = if (progress) VISIBLE else GONE
+        val observer = Observer<Boolean> { isLoading ->
+            progress_bar.visibility = if (isLoading) VISIBLE else GONE
         }
 
         viewModel.progress.observe(viewLifecycleOwner, observer)

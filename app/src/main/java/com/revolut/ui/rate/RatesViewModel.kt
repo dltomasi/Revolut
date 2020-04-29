@@ -10,6 +10,7 @@ import com.revolut.rx.SchedulersProvider
 import com.revolut.ui.BaseViewModel
 import com.revolut.uiSubscribe
 import io.reactivex.Observable
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 class RatesViewModel constructor(
@@ -40,15 +41,19 @@ class RatesViewModel constructor(
             addReaction(
                 countryInteractor.getCountry(first.currency).toObservable()
                     .backgroundSubscribe(scheduler)
-                    .subscribe {
-                        first.country = it
-                    }
+                    .subscribe(
+                        { first.country = it },
+                        { it.printStackTrace() }
+                    )
             )
         }
+
         addReaction(
             Observable
                 .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
-               // .doOnSubscribe{startLoading()}
+                .observeOn(scheduler.main)
+                .doOnNext { startLoading() }
+                .observeOn(scheduler.background)
                 .flatMap {
                     ratesInteractor.fetchRates(first.currency)
                         .doOnNext { originalRates = it }
@@ -70,7 +75,9 @@ class RatesViewModel constructor(
                         }
                         .toList().toObservable()
                 }
-                .uiSubscribe(scheduler)
+                .observeOn(scheduler.main)
+                .doOnNext { hideProgress() }
+                .subscribeOn(scheduler.background)
                 .subscribe(
                     {
                         it.add(0, first)
@@ -81,8 +88,10 @@ class RatesViewModel constructor(
         )
     }
 
+
     private fun handleError(e: Throwable) {
         e.printStackTrace()
+        hideProgress()
         error.value = e.localizedMessage
     }
 

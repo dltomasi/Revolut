@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Revolut</string>
+    <string name="error_message">An error has occurred.\n\nPlease try again</string>
 </resources>
