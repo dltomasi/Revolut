@@ -10,6 +10,7 @@ import com.revolut.ui.rate.RatesViewModel
 import com.revolut.ui.rate.RatesViewModel.Companion.START_CURRENCY
 import com.revolut.ui.rate.RatesViewModel.Companion.TIME_INTERVAL
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -38,7 +39,7 @@ class RatesViewModelTest {
     @Before
     fun before() {
         whenever(ratesInteractor.fetchRates(any())).thenReturn(Observable.just(rates))
-        whenever(countryInteractor.getCountry(any())).thenReturn(Observable.just(mock()))
+        whenever(countryInteractor.getCountry(any())).thenReturn(Single.just(mock()))
         viewModel = RatesViewModel(
             schedulersProvider,
             ratesInteractor,

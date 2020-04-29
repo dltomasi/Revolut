@@ -5,6 +5,7 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.revolut.country.background.CountryWorkManager
+import com.revolut.country.background.CountryWorkManager.Companion.BASE_KEY
 import com.revolut.country.model.Country
 import com.revolut.country.persistence.CountryPersistence
 import io.reactivex.Single
@@ -21,14 +22,14 @@ class CountryInteractorImpl(
             Single.just(it)
         } ?: run {
             createWorker(base)
-            Single.just(Country("", ""))
+            Single.just(Country.EMPTY)
         }
 
     private fun createWorker(base: String) {
         if (workers[base] == null) {
             workers[base] = true
             val input: Data = Data.Builder()
-                .putString("base", base)
+                .putString(BASE_KEY, base)
                 .build()
             workManager.enqueue(
                 OneTimeWorkRequest.Builder(CountryWorkManager::class.java)

@@ -1,7 +1,8 @@
 package com.revolut.interactor
 
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import com.nhaarman.mockito_kotlin.*
 import com.revolut.country.interactor.CountryInteractor
 import com.revolut.country.interactor.CountryInteractorImpl
 import com.revolut.country.model.Country
@@ -17,23 +18,30 @@ class CountryInteractorTest {
 
     private lateinit var subject: CountryInteractor
 
-    private val mockCountryService: CountryService = mock()
-    private val mockCountryPersistence: CountryPersistence = mock()
-    private val c1 = CountryResponse(listOf(CurrencyResponse("real")),"flag1")
-    private val c2 = CountryResponse(listOf(CurrencyResponse("c2")),"flag2")
-    private var countries = listOf(c1, c2)
+    private val countryPersistence: CountryPersistence = mock()
+    private val workManager: WorkManager = mock()
+    private val c1 = Country("c1", "flag1")
 
 
     @Before
     fun before() {
-        whenever(mockCountryService.fetchCountry("brl")).thenReturn(Observable.just(countries))
-        subject =
-            CountryInteractorImpl(mockCountryService, mockCountryPersistence)
+        whenever(countryPersistence.get("persisted")).thenReturn(c1)
+        subject = CountryInteractorImpl(countryPersistence, workManager)
     }
 
     @Test
-    fun `fetch data should succeed`() {
-        subject.getCountry("brl").test()
-            .assertValue(Country("real", "flag1"))
+    fun `persisted value should return value and not call worker`() {
+        subject.getCountry("persisted").test()
+            .assertValue(Country("c1", "flag1"))
+
+        verifyNoMoreInteractions(workManager)
+    }
+
+    @Test
+    fun `not persisted value should return empty and call worker`() {
+        subject.getCountry("not persisted").test()
+            .assertValue(Country.EMPTY)
+
+        verify(workManager).enqueue(any< OneTimeWorkRequest>())
     }
 }

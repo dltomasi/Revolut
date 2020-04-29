@@ -57,7 +57,6 @@ class RatesViewModel constructor(
                             if (rate.country == null) {
                                 countryInteractor.getCountry(rate.currency)
                                     .map {
-                                        Log.d("country", it.toString())
                                         rate.country = it
                                         rate
                                     }.toObservable()

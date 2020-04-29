@@ -6,6 +6,8 @@ import androidx.work.WorkManager
 import com.revolut.country.background.CountryWorkManager
 import com.revolut.country.interactor.CountryInteractor
 import com.revolut.country.interactor.CountryInteractorImpl
+import com.revolut.country.interactor.CountryWebInteractor
+import com.revolut.country.interactor.CountryWebInteractorImpl
 import com.revolut.country.network.CountryWebClient
 import com.revolut.country.persistence.CountryPersistence
 import com.revolut.rate.interactor.RatesInteractor
@@ -35,4 +37,5 @@ val countryModule = module {
     single { CountryPersistence(get()) }
     single { WorkManager.getInstance(get()) }
     factory<CountryInteractor> { CountryInteractorImpl(get(), get()) }
+    factory<CountryWebInteractor> { CountryWebInteractorImpl(get(), get()) }
 }
