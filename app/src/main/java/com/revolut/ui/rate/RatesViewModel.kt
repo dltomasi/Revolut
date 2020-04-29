@@ -3,9 +3,9 @@ package com.revolut.ui.rate
 import androidx.lifecycle.MutableLiveData
 import com.revolut.backgroundSubscribe
 import com.revolut.country.interactor.CountryInteractor
-import com.revolut.rx.SchedulersProvider
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
+import com.revolut.rx.SchedulersProvider
 import com.revolut.ui.BaseViewModel
 import com.revolut.uiSubscribe
 import io.reactivex.Observable
@@ -17,7 +17,7 @@ class RatesViewModel constructor(
     private val countryInteractor: CountryInteractor
 ) : BaseViewModel() {
 
-    private var originalRates = mutableListOf<Rate>()
+    private var originalRates = listOf<Rate>()
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<String>()
 
@@ -43,8 +43,7 @@ class RatesViewModel constructor(
                 .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
                 .flatMap {
                     ratesInteractor.fetchRates(first.currency)
-                        .map { it.toList() }
-                        .doOnNext { originalRates = it.toMutableList() }
+                        .doOnNext { originalRates = it }
                         .flatMapIterable { it }
                         .flatMap { rate ->
                             if (rate.country == null) {
@@ -85,7 +84,7 @@ class RatesViewModel constructor(
         } else {
             first.rate = value.toDouble()
         }
-        val newList = originalRates
+        val newList = originalRates.map { Rate(it.currency, it.rate) }
             .map {
                 it.rate = it.rateValue(first)
                 it

@@ -76,7 +76,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
 
                 } ?: run {
                     flag.setImageResource(android.R.drawable.ic_menu_upload)
-                    name.text = "empty"
+                    name.text = ""
                 }
 
             }
