@@ -21,7 +21,7 @@ import org.koin.dsl.module.module
 
 val rateModule = module {
     single { RateWebClient().rateService() }
-    factory<RatesInteractor> { RatesInteractorImpl(get()) }
+    factory<RatesInteractor> { RatesInteractorImpl(get(), get()) }
     single<SchedulersProvider> { SchedulersProvider.Impl() }
     viewModel { RatesViewModel(get(), get(), get()) }
 }

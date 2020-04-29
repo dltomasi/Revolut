@@ -45,11 +45,11 @@ class RatesViewModelTest {
             ratesInteractor,
             countryInteractor
         )
+        testScheduler.triggerActions()
     }
 
     @Test
     fun `should get rates on init`() {
-        testScheduler.triggerActions()
         verify(ratesInteractor, times(1)).fetchRates(any())
         val expected = rates.toList().toMutableList()
         expected.add(0, START_CURRENCY)
@@ -58,7 +58,6 @@ class RatesViewModelTest {
 
     @Test
     fun `should get rates every 1 sec`() {
-        testScheduler.triggerActions()
         verify(ratesInteractor, times(1)).fetchRates(any())
         testScheduler.advanceTimeBy(TIME_INTERVAL, TimeUnit.SECONDS)
         verify(ratesInteractor, times(2)).fetchRates(any())
@@ -69,7 +68,6 @@ class RatesViewModelTest {
     @Test
     @Ignore
     fun `set empty value should update list with zeros`() {
-        testScheduler.triggerActions()
         viewModel.setNewValue("")
 
         val expected = listOf(Rate("EUR", 0.0), Rate("r1", 0.0), Rate("r2", 0.0))
@@ -78,7 +76,6 @@ class RatesViewModelTest {
 
     @Test
     fun `set new value should update list`() {
-        testScheduler.triggerActions()
         viewModel.setNewValue("2")
 
         val expected = mutableListOf(Rate("EUR", 2.0), Rate("r1", 2.0), Rate("r2", 4.0))
@@ -87,7 +84,6 @@ class RatesViewModelTest {
 
     @Test
     fun `select new item should update first`() {
-        testScheduler.triggerActions()
         viewModel.selectItem(1)
         testScheduler.triggerActions()
         val expected = listOf(Rate("r1", 1.0), Rate("EUR", 1.0), Rate("r2", 2.0))

@@ -1,6 +1,5 @@
 package com.revolut.ui.rate
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.revolut.backgroundSubscribe
 import com.revolut.country.interactor.CountryInteractor
@@ -8,9 +7,7 @@ import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
 import com.revolut.rx.SchedulersProvider
 import com.revolut.ui.BaseViewModel
-import com.revolut.uiSubscribe
 import io.reactivex.Observable
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 class RatesViewModel constructor(
@@ -58,17 +55,6 @@ class RatesViewModel constructor(
                     ratesInteractor.fetchRates(first.currency)
                         .doOnNext { originalRates = it }
                         .flatMapIterable { it }
-                        .flatMap { rate ->
-                            if (rate.country == null) {
-                                countryInteractor.getCountry(rate.currency)
-                                    .map {
-                                        rate.country = it
-                                        rate
-                                    }.toObservable()
-                            } else {
-                                Observable.just(rate)
-                            }
-                        }
                         .map {
                             it.rate = it.rateValue(first)
                             it
@@ -78,16 +64,14 @@ class RatesViewModel constructor(
                 .observeOn(scheduler.main)
                 .doOnNext { hideProgress() }
                 .subscribeOn(scheduler.background)
-                .subscribe(
-                    {
-                        it.add(0, first)
-                        rates.value = it
-                    },
-                    { handleError(it) }
-                )
+                .subscribe(::onSuccess,::handleError)
         )
     }
 
+    private fun onSuccess(data: MutableList<Rate>) {
+        data.add(0, first)
+        rates.value = data
+    }
 
     private fun handleError(e: Throwable) {
         e.printStackTrace()
