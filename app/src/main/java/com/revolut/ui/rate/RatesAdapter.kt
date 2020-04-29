@@ -69,13 +69,13 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                 }
                 item.country?.let { country ->
                     name.text = country.name
-                    GlideToVectorYou
-                        .init()
-                        .with(this.context)
-                        .load(Uri.parse(country.flag), flag)
+                    if (country.flag.isNotEmpty())
+                        GlideToVectorYou
+                            .init()
+                            .with(this.context)
+                            .load(Uri.parse(country.flag), flag)
 
                 } ?: run {
-                    flag.setImageResource(android.R.drawable.ic_menu_upload)
                     name.text = ""
                 }
 

@@ -2,9 +2,9 @@ package com.revolut.country.interactor
 
 
 import com.revolut.country.model.Country
-import io.reactivex.Observable
+import io.reactivex.Single
 
 interface CountryInteractor {
 
-    fun getCountry(base: String): Observable<Country>
+    fun getCountry(base: String): Single<Country>
 }

@@ -1,5 +1,6 @@
 package com.revolut.ui.rate
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.revolut.backgroundSubscribe
 import com.revolut.country.interactor.CountryInteractor
@@ -28,10 +29,16 @@ class RatesViewModel constructor(
         getRates()
     }
 
+    private fun startLoading() {
+        if (originalRates.isEmpty()) {
+            showProgress()
+        }
+    }
+
     private fun getRates() {
         if (first.country == null) {
             addReaction(
-                countryInteractor.getCountry(first.currency)
+                countryInteractor.getCountry(first.currency).toObservable()
                     .backgroundSubscribe(scheduler)
                     .subscribe {
                         first.country = it
@@ -41,6 +48,7 @@ class RatesViewModel constructor(
         addReaction(
             Observable
                 .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
+               // .doOnSubscribe{startLoading()}
                 .flatMap {
                     ratesInteractor.fetchRates(first.currency)
                         .doOnNext { originalRates = it }
@@ -49,9 +57,10 @@ class RatesViewModel constructor(
                             if (rate.country == null) {
                                 countryInteractor.getCountry(rate.currency)
                                     .map {
+                                        Log.d("country", it.toString())
                                         rate.country = it
                                         rate
-                                    }
+                                    }.toObservable()
                             } else {
                                 Observable.just(rate)
                             }

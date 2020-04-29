@@ -1,18 +1,23 @@
 package com.revolut.ui
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.PublishSubject
 
 open class BaseViewModel : ViewModel() {
 
     private val disposable = CompositeDisposable()
 
-    val progressSubject = PublishSubject.create<Boolean>()
+    val progress = MutableLiveData<Boolean>()
 
-    fun showProgress() = progressSubject.onNext(true)
-    fun hideProgress() = progressSubject.onNext(false)
+    fun showProgress() {
+        progress.value = true
+    }
+
+    fun hideProgress() {
+        progress.value = false
+    }
 
     protected fun addReaction(reaction: Disposable) {
         disposable.add(reaction)

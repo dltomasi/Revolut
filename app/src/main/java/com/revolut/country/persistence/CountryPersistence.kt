@@ -21,6 +21,7 @@ class CountryPersistence(private val storage: SharedPreferences) {
 
     fun get(code: String): Country? = countries[code]
 
+    @Synchronized
     fun set(code: String, country: Country) {
         countries[code] = country
         storage.edit().putString(MAP_KEY, gson.toJson(countries)).apply()

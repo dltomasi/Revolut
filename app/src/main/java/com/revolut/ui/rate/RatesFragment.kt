@@ -3,6 +3,8 @@ package com.revolut.ui.rate
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -10,7 +12,6 @@ import androidx.lifecycle.Observer
 import com.revolut.R
 import com.revolut.rate.model.Rate
 import kotlinx.android.synthetic.main.main_fragment.*
-import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class RatesFragment : Fragment() {
@@ -33,7 +34,9 @@ class RatesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setUpList()
         errorObserver()
+        progressObserver()
     }
+
 
     private fun setUpList() {
         rates_list.adapter = adapter
@@ -66,4 +69,16 @@ class RatesFragment : Fragment() {
         viewModel.error.observe(viewLifecycleOwner, ratesObserver)
     }
 
+    private fun progressObserver() {
+        val observer = Observer<Boolean> { progress ->
+            progress_bar.visibility = if (progress) VISIBLE else GONE
+        }
+
+        viewModel.progress.observe(viewLifecycleOwner, observer)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.onStop()
+    }
 }

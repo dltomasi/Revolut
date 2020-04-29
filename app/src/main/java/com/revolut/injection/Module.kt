@@ -2,6 +2,8 @@ package com.revolut.injection
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.work.WorkManager
+import com.revolut.country.background.CountryWorkManager
 import com.revolut.country.interactor.CountryInteractor
 import com.revolut.country.interactor.CountryInteractorImpl
 import com.revolut.country.network.CountryWebClient
@@ -31,5 +33,6 @@ val countryModule = module {
         )
     }
     single { CountryPersistence(get()) }
+    single { WorkManager.getInstance(get()) }
     factory<CountryInteractor> { CountryInteractorImpl(get(), get()) }
 }
