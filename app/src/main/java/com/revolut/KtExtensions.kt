@@ -6,7 +6,6 @@ import android.widget.EditText
 import com.google.gson.internal.LinkedTreeMap
 import com.revolut.rx.SchedulersProvider
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
 
 typealias RatesMap = LinkedTreeMap<String, Double>
 
@@ -17,7 +16,6 @@ fun <T> Observable<T>.uiSubscribe(schedulers: SchedulersProvider): Observable<T>
 fun <T> Observable<T>.backgroundSubscribe(schedulers: SchedulersProvider): Observable<T> {
     return subscribeOn(schedulers.background).observeOn(schedulers.background)
 }
-
 
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) : TextWatcher {
     val watcher = object : TextWatcher {

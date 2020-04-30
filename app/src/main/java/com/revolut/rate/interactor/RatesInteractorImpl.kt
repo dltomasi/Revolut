@@ -16,12 +16,12 @@ class RatesInteractorImpl(
             .map { it.rates.toList() }
             .flatMapIterable { it }
             .map { Rate(it.first, it.second, null) }
-            .flatMap { rate ->
+            .flatMapSingle { rate ->
                 countryInteractor.getCountry(rate.currency)
                     .map {
                         rate.country = it
                         rate
-                    }.toObservable()
+                    }
             }
             .toList().toObservable()
 }

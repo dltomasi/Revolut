@@ -17,7 +17,17 @@ class Rate(
         other as Rate
         return this.currency == other.currency
                 && this.rate == other.rate
+                && this.country?.equals(other.country) ?: true
+    }
+
+    override fun toString(): String {
+        return "$currency: ${rateText()}"
     }
 }
+
+fun List<Rate>.copy(): List<Rate> {
+    return map { Rate(it.currency, it.rate, it.country) }
+}
+
 
 

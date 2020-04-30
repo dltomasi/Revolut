@@ -24,9 +24,9 @@ class RatesInteractorTest {
     var ratesMap: RatesMap = LinkedTreeMap()
     private var responseData: RatesResponse
 
-    private val rates = listOf(Rate("r1" ,1.0), Rate("r2", 2.0))
     private val c1 = Country("c1", "f1")
     private val c2 = Country("c2", "f2")
+    private val rates = listOf(Rate("r1", 1.0, c1), Rate("r2", 2.0, c2))
 
     init {
         ratesMap["r1"] = 1.0
@@ -38,7 +38,7 @@ class RatesInteractorTest {
     }
 
     @Before
-    fun before(){
+    fun before() {
         whenever(rateService.fetchRates(any())).thenReturn(Observable.just(responseData))
         whenever(countryInteractor.getCountry("r1")).thenReturn(Single.just(c1))
         whenever(countryInteractor.getCountry("r2")).thenReturn(Single.just(c2))
@@ -46,7 +46,7 @@ class RatesInteractorTest {
     }
 
     @Test
-    fun `fetch data should succeed`(){
+    fun `fetch data should succeed`() {
         subject.fetchRates("").test()
             .assertValue(rates)
     }

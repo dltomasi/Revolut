@@ -5,6 +5,7 @@ import com.revolut.backgroundSubscribe
 import com.revolut.country.interactor.CountryInteractor
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
+import com.revolut.rate.model.copy
 import com.revolut.rx.SchedulersProvider
 import com.revolut.ui.BaseViewModel
 import io.reactivex.Observable
@@ -51,20 +52,23 @@ class RatesViewModel constructor(
                 .observeOn(scheduler.main)
                 .doOnNext { startLoading() }
                 .observeOn(scheduler.background)
-                .flatMap {
+                .flatMapSingle {
                     ratesInteractor.fetchRates(first.currency)
-                        .doOnNext { originalRates = it }
+                        .map {
+                            originalRates = it.copy()
+                            it
+                        }
                         .flatMapIterable { it }
                         .map {
                             it.rate = it.rateValue(first)
                             it
                         }
-                        .toList().toObservable()
+                        .toList()
                 }
                 .observeOn(scheduler.main)
                 .doOnNext { hideProgress() }
                 .subscribeOn(scheduler.background)
-                .subscribe(::onSuccess,::handleError)
+                .subscribe(::onSuccess, ::handleError)
         )
     }
 
@@ -85,7 +89,7 @@ class RatesViewModel constructor(
         } else {
             first.rate = value.toDouble()
         }
-        val newList = originalRates.map { Rate(it.currency, it.rate) }
+        val newList = originalRates.copy()
             .map {
                 it.rate = it.rateValue(first)
                 it
