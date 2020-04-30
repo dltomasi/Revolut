@@ -19,7 +19,7 @@ class RatesViewModel constructor(
 
     private var originalRates = listOf<Rate>()
     val rates = MutableLiveData<List<Rate>>()
-    val error = MutableLiveData<String>()
+    val error = MutableLiveData<Boolean>()
 
     private var first: Rate =
         START_CURRENCY
@@ -80,7 +80,7 @@ class RatesViewModel constructor(
     private fun handleError(e: Throwable) {
         e.printStackTrace()
         hideProgress()
-        error.value = e.localizedMessage
+        error.value = originalRates.isEmpty()
     }
 
     fun setNewValue(value: String) {
@@ -106,6 +106,11 @@ class RatesViewModel constructor(
                 .toMutableList()
         newList.add(0, first)
         rates.value = newList
+    }
+
+    fun tryAgain() {
+        error.value = false
+        getRates()
     }
 
     companion object {

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.revolut.R
 import com.revolut.rate.model.Rate
+import kotlinx.android.synthetic.main.error_view.*
 import kotlinx.android.synthetic.main.main_fragment.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -35,6 +36,9 @@ class RatesFragment : Fragment() {
         setUpList()
         errorObserver()
         progressObserver()
+        try_again.setOnClickListener {
+            viewModel.tryAgain()
+        }
     }
 
 
@@ -62,11 +66,11 @@ class RatesFragment : Fragment() {
     }
 
     private fun errorObserver() {
-        val ratesObserver = Observer<String> {
-            error_view.visibility = VISIBLE
+        val observer = Observer<Boolean> { error ->
+            error_view.visibility = if (error) VISIBLE else GONE
         }
 
-        viewModel.error.observe(viewLifecycleOwner, ratesObserver)
+        viewModel.error.observe(viewLifecycleOwner, observer)
     }
 
     private fun progressObserver() {
