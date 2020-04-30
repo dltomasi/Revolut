@@ -74,6 +74,7 @@
             android:inputType="number"
             android:textColor="@android:color/black"
             android:textSize="20sp"
+            android:imeOptions="actionDone"
             tools:text="1.00" />
 
     </FrameLayout>
