@@ -33,12 +33,14 @@ class RatesViewModelTest {
     private val countryInteractor: CountryInteractor = mock()
     private val testScheduler = TestScheduler()
     private val schedulersProvider = TestSchedulerProvider(testScheduler)
-    private val rates = listOf(Rate("r1", 1.0), Rate("r2", 2.0))
+    private val ratesEur = listOf(Rate("r1", 1.0), Rate("r2", 2.0))
+    private val ratesR1 = listOf(Rate("EUR", 0.5), Rate("r2", 2.0))
 
 
     @Before
     fun before() {
-        whenever(ratesInteractor.fetchRates(any())).thenReturn(Observable.just(rates))
+        whenever(ratesInteractor.fetchRates("EUR")).thenReturn(Observable.just(ratesEur))
+        whenever(ratesInteractor.fetchRates("r1")).thenReturn(Observable.just(ratesR1))
         whenever(countryInteractor.getCountry(any())).thenReturn(Single.just(mock()))
         viewModel = RatesViewModel(
             schedulersProvider,
@@ -51,7 +53,7 @@ class RatesViewModelTest {
     @Test
     fun `should get rates on init`() {
         verify(ratesInteractor, times(1)).fetchRates(any())
-        val expected = rates.toList().toMutableList()
+        val expected = ratesEur.toList().toMutableList()
         expected.add(0, START_CURRENCY)
         assertEquals(expected, viewModel.rates.value)
     }
@@ -78,16 +80,19 @@ class RatesViewModelTest {
     fun `set new value should update list`() {
         viewModel.setNewValue("2")
 
-        val expected = mutableListOf(Rate("EUR", 2.0), Rate("r1", 2.0), Rate("r2", 4.0))
-        assertTrue(expected.containsAll(viewModel.rates.value!!))
+        val expected = listOf(Rate("EUR", 2.0), Rate("r1", 2.0), Rate("r2", 4.0))
+        assertEquals(expected, viewModel.rates.value!!)
     }
 
     @Test
-    fun `select new item should update first`() {
+    fun `select new item should update list with new rates`() {
         viewModel.selectItem(1)
         testScheduler.triggerActions()
-        val expected = listOf(Rate("r1", 1.0), Rate("EUR", 1.0), Rate("r2", 2.0))
-        assertTrue(expected.containsAll(viewModel.rates.value!!))
+        testScheduler.advanceTimeBy(TIME_INTERVAL, TimeUnit.SECONDS)
+        testScheduler.triggerActions()
+        val expected = listOf(Rate("r1", 1.0), Rate("EUR", 0.5), Rate("r2", 2.0))
+        assertEquals(expected, viewModel.rates.value!!)
     }
+
 
 }

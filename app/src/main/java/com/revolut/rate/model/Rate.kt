@@ -25,8 +25,8 @@ class Rate(
     }
 }
 
-fun List<Rate>.copy(): List<Rate> {
-    return map { Rate(it.currency, it.rate, it.country) }
+fun List<Rate>.copy(): MutableList<Rate> {
+    return map { Rate(it.currency, it.rate, it.country) }.toMutableList()
 }
 
 

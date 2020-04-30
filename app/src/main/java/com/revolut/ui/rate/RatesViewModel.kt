@@ -17,7 +17,7 @@ class RatesViewModel constructor(
     private val countryInteractor: CountryInteractor
 ) : BaseViewModel() {
 
-    private var originalRates = listOf<Rate>()
+    private var originalRates = mutableListOf<Rate>()
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<Boolean>()
 
@@ -100,12 +100,8 @@ class RatesViewModel constructor(
 
     fun selectItem(position: Int) {
         first = rates.value!![position]
-        val newList =
-            rates.value!!
-                .filter { it.currency != first.currency }
-                .toMutableList()
-        newList.add(0, first)
-        rates.value = newList
+        originalRates.clear()
+        showProgress()
     }
 
     fun tryAgain() {
