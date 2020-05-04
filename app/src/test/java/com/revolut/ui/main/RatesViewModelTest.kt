@@ -12,8 +12,7 @@ import com.revolut.ui.rate.RatesViewModel.Companion.TIME_INTERVAL
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -41,17 +40,19 @@ class RatesViewModelTest {
     fun before() {
         whenever(ratesInteractor.fetchRates("EUR")).thenReturn(Observable.just(ratesEur))
         whenever(ratesInteractor.fetchRates("r1")).thenReturn(Observable.just(ratesR1))
+        whenever(ratesInteractor.fetchRates("r2")).thenReturn(Observable.error(Exception()))
         whenever(countryInteractor.getCountry(any())).thenReturn(Single.just(mock()))
         viewModel = RatesViewModel(
             schedulersProvider,
             ratesInteractor,
             countryInteractor
         )
+        viewModel.onStart()
         testScheduler.triggerActions()
     }
 
     @Test
-    fun `should get rates on init`() {
+    fun `should get rates on start`() {
         verify(ratesInteractor, times(1)).fetchRates(any())
         val expected = ratesEur.toList().toMutableList()
         expected.add(0, START_CURRENCY)
@@ -70,7 +71,7 @@ class RatesViewModelTest {
     @Test
     @Ignore
     fun `set empty value should update list with zeros`() {
-        viewModel.setNewValue("")
+        viewModel.setNewValue("a")
 
         val expected = listOf(Rate("EUR", 0.0), Rate("r1", 0.0), Rate("r2", 0.0))
         assertTrue(expected == viewModel.rates.value!!)
@@ -90,8 +91,19 @@ class RatesViewModelTest {
         testScheduler.triggerActions()
         testScheduler.advanceTimeBy(TIME_INTERVAL, TimeUnit.SECONDS)
         testScheduler.triggerActions()
+
         val expected = listOf(Rate("r1", 1.0), Rate("EUR", 0.5), Rate("r2", 2.0))
         assertEquals(expected, viewModel.rates.value!!)
+    }
+
+    @Test
+    fun `on error should display error screen`() {
+        whenever(ratesInteractor.fetchRates("EUR")).thenReturn(Observable.error(Exception()))
+        viewModel.selectItem(2)
+        testScheduler.advanceTimeBy(TIME_INTERVAL, TimeUnit.SECONDS)
+        testScheduler.triggerActions()
+
+        assertTrue(viewModel.error.value!!)
     }
 
 

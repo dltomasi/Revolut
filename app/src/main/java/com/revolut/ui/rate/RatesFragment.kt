@@ -42,6 +42,11 @@ class RatesFragment : Fragment() {
     }
 
 
+    override fun onStart() {
+        super.onStart()
+        viewModel.onStart()
+    }
+
     private fun setUpList() {
         rates_list.adapter = adapter
 

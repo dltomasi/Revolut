@@ -23,6 +23,10 @@ class Rate(
     override fun toString(): String {
         return "$currency: ${rateText()}"
     }
+
+    companion object {
+        val EMPTY = Rate("", 0.0)
+    }
 }
 
 fun List<Rate>.copy(): MutableList<Rate> {

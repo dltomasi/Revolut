@@ -9,6 +9,7 @@ import com.revolut.rate.model.copy
 import com.revolut.rx.SchedulersProvider
 import com.revolut.ui.BaseViewModel
 import io.reactivex.Observable
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
 class RatesViewModel constructor(
@@ -23,10 +24,6 @@ class RatesViewModel constructor(
 
     private var first: Rate =
         START_CURRENCY
-
-    init {
-        getRates()
-    }
 
     private fun startLoading() {
         if (originalRates.isEmpty()) {
@@ -84,11 +81,12 @@ class RatesViewModel constructor(
     }
 
     fun setNewValue(value: String) {
-        if (value.isEmpty()) {
-            first.rate = 0.0
-        } else {
+        try {
             first.rate = value.toDouble()
+        } catch (e: Exception) {
+            first.rate = 0.0
         }
+
         val newList = originalRates.copy()
             .map {
                 it.rate = it.rateValue(first)
@@ -109,8 +107,12 @@ class RatesViewModel constructor(
         getRates()
     }
 
+    fun onStart() {
+        getRates()
+    }
+
     companion object {
-        const val TIME_INTERVAL = 5L
+        const val TIME_INTERVAL = 1L
         val START_CURRENCY = Rate("EUR", 1.0)
     }
 
