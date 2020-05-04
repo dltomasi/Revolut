@@ -22,8 +22,7 @@ class RatesViewModel constructor(
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<Boolean>()
 
-    private var first: Rate =
-        START_CURRENCY
+    private var first: Rate = START_CURRENCY
 
     private fun startLoading() {
         if (originalRates.isEmpty()) {

@@ -1,4 +1,4 @@
-package com.revolut
+package com.revolut.utils
 
 import android.view.View
 import androidx.test.espresso.IdlingRegistry
