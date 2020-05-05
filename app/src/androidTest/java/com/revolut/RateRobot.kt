@@ -4,6 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import com.nhaarman.mockitokotlin2.doReturn
@@ -17,15 +18,15 @@ import com.revolut.utils.IdlingResourceViewActions
 import com.revolut.utils.withRecyclerView
 import io.reactivex.Observable
 import io.reactivex.Single
+import org.hamcrest.Matchers.allOf
 import org.koin.dsl.module.module
+
 
 class RateRobot {
 
     companion object {
-        val mockedList = listOf(Rate("Currency 1", 1.0), Rate("Currency 2", 2.0))
+        val mockedList = listOf(Rate("Currency 1", 0.5), Rate("Currency 2", 3.0))
     }
-
-    var setUp = SetUp()
 
     inner class SetUp {
 
@@ -58,7 +59,15 @@ class RateRobot {
     }
 
     fun clickItem(position: Int) {
-        onView(withRecyclerView(R.id.rates_list).atPosition(position)).perform(click());
+        onView(withRecyclerView(R.id.rates_list)
+            .atPosition(position))
+            .perform(click())
+    }
+
+    fun editItem(oldValue: String, newValue: String) {
+        onView(
+            allOf(withText(oldValue)))
+            .perform(replaceText(newValue))
     }
 }
 
@@ -67,4 +76,4 @@ fun start(func: RateRobot.() -> Unit) = RateRobot().apply {
     func()
 }
 
-fun RateRobot.koinModule() = this.setUp.mockKoinModule
+fun RateRobot.koinModule() = this.SetUp().mockKoinModule

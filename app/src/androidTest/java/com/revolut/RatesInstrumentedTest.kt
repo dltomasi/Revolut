@@ -26,7 +26,17 @@ class RateFragmentTest : KoinTest {
         start {
             checkItem(0, "EUR", "1.00")
             clickItem(2)
-            checkItem(0, "Currency 2", "2.00")
+            checkItem(0, "Currency 2", "3.00")
+        }
+    }
+
+    @Test
+    fun edit_value_should_update_others() {
+        start {
+            editItem("1.00" ,"2.00")
+            checkItem(0, "EUR", "2.00")
+            checkItem(1, "Currency 1", "1.00")
+            checkItem(2, "Currency 2", "6.00")
         }
     }
 

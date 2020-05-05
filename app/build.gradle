@@ -26,6 +26,10 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    testOptions {
+        animationsDisabled = true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
