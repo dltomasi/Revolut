@@ -1,14 +1,14 @@
 package com.revolut.ui.rate
 
 import android.net.Uri
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
+import com.jakewharton.rxbinding2.widget.RxTextView
 import com.revolut.R
-import com.revolut.afterTextChanged
 import com.revolut.rate.model.Rate
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.rate_item.view.*
 
 class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
@@ -16,9 +16,13 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
     private var items = mutableListOf<Rate>()
     lateinit var clickListener: RateListListener
 
+    var textChangeObservable: PublishSubject<String> = PublishSubject.create()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RateViewHolder {
         return RateViewHolder(parent) {
-            items.add(0, items.removeAt(it))
+            if (items.size > 1) {
+                items.add(0, items.removeAt(it))
+            }
             notifyItemMoved(it, 0)
             notifyItemChanged(0)
             clickListener.onItemSelected(it)
@@ -45,8 +49,6 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
             LayoutInflater.from(parent.context).inflate(R.layout.rate_item, parent, false)
         ) {
 
-        private var listenerText: TextWatcher? = null
-
         fun bind(position: Int, item: Rate) {
             itemView.apply {
                 rate.text = item.currency
@@ -55,14 +57,12 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                     onClick(position)
                 }
                 value.isEnabled = position == 0
-                value.removeTextChangedListener(listenerText)
                 if (position == 0) {
-                    listenerText = value.afterTextChanged { fieldValue ->
+                    RxTextView.textChanges(value).skipInitialValue()
                         // avoid error when recycling view
-                        if (rate.text == item.currency) {
-                            clickListener.onValueChanged(fieldValue)
-                        }
-                    }
+                        .filter { rate.text == item.currency }
+                        .map { it.toString() }
+                        .subscribe(textChangeObservable)
                 }
                 item.country?.let { country ->
                     name.text = country.name

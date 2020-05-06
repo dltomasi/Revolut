@@ -8,6 +8,7 @@ import com.revolut.rate.model.Rate
 import com.revolut.rate.model.copy
 import com.revolut.rx.SchedulersProvider
 import com.revolut.ui.BaseViewModel
+import com.revolut.uiSubscribe
 import io.reactivex.Observable
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
@@ -18,6 +19,7 @@ class RatesViewModel constructor(
     private val countryInteractor: CountryInteractor
 ) : BaseViewModel() {
 
+    var textChangeObservable: Observable<String> = Observable.empty()
     private var originalRates = mutableListOf<Rate>()
     val rates = MutableLiveData<List<Rate>>()
     val error = MutableLiveData<Boolean>()
@@ -66,6 +68,14 @@ class RatesViewModel constructor(
                 .subscribeOn(scheduler.background)
                 .subscribe(::onSuccess, ::handleError)
         )
+
+        addReaction(
+            textChangeObservable
+                .uiSubscribe(scheduler)
+                .subscribe {
+                    setNewValue(it)
+                }
+        )
     }
 
     private fun onSuccess(data: MutableList<Rate>) {
@@ -79,13 +89,12 @@ class RatesViewModel constructor(
         error.value = originalRates.isEmpty()
     }
 
-    fun setNewValue(value: String) {
+    private fun setNewValue(value: String) {
         try {
             first.rate = value.toDouble()
         } catch (e: Exception) {
             first.rate = 0.0
         }
-
         val newList = originalRates.copy()
             .map {
                 it.rate = it.rateValue(first)

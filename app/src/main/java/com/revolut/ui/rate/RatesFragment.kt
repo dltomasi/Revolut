@@ -49,12 +49,9 @@ class RatesFragment : Fragment() {
 
     private fun setUpList() {
         rates_list.adapter = adapter
+        viewModel.textChangeObservable = adapter.textChangeObservable
 
         adapter.clickListener = object : RateListListener {
-            override fun onValueChanged(value: String) {
-                viewModel.setNewValue(value)
-            }
-
             override fun onItemSelected(position: Int) {
                 rates_list.scrollToPosition(0)
                 viewModel.selectItem(position)

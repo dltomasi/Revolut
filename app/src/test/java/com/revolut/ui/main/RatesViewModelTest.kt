@@ -12,6 +12,7 @@ import com.revolut.ui.rate.RatesViewModel.Companion.TIME_INTERVAL
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.TestScheduler
+import io.reactivex.subjects.PublishSubject
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Ignore
@@ -34,7 +35,7 @@ class RatesViewModelTest {
     private val schedulersProvider = TestSchedulerProvider(testScheduler)
     private val ratesEur = listOf(Rate("r1", 1.0), Rate("r2", 2.0))
     private val ratesR1 = listOf(Rate("EUR", 0.5), Rate("r2", 2.0))
-
+    private val click : PublishSubject<String> = PublishSubject.create()
 
     @Before
     fun before() {
@@ -42,11 +43,13 @@ class RatesViewModelTest {
         whenever(ratesInteractor.fetchRates("r1")).thenReturn(Observable.just(ratesR1))
         whenever(ratesInteractor.fetchRates("r2")).thenReturn(Observable.error(Exception()))
         whenever(countryInteractor.getCountry(any())).thenReturn(Single.just(mock()))
+
         viewModel = RatesViewModel(
             schedulersProvider,
             ratesInteractor,
             countryInteractor
         )
+        viewModel.textChangeObservable = click
         viewModel.onStart()
         testScheduler.triggerActions()
     }
@@ -54,7 +57,7 @@ class RatesViewModelTest {
     @Test
     fun `should get rates on start`() {
         verify(ratesInteractor, times(1)).fetchRates(any())
-        val expected = ratesEur.toList().toMutableList()
+        val expected = ratesEur.toMutableList()
         expected.add(0, START_CURRENCY)
         assertEquals(expected, viewModel.rates.value)
     }
@@ -69,17 +72,9 @@ class RatesViewModelTest {
     }
 
     @Test
-    @Ignore
-    fun `set empty value should update list with zeros`() {
-        viewModel.setNewValue("a")
-
-        val expected = listOf(Rate("EUR", 0.0), Rate("r1", 0.0), Rate("r2", 0.0))
-        assertTrue(expected == viewModel.rates.value!!)
-    }
-
-    @Test
     fun `set new value should update list`() {
-        viewModel.setNewValue("2")
+        click.onNext("2.0")
+        testScheduler.triggerActions()
 
         val expected = listOf(Rate("EUR", 2.0), Rate("r1", 2.0), Rate("r2", 4.0))
         assertEquals(expected, viewModel.rates.value!!)
