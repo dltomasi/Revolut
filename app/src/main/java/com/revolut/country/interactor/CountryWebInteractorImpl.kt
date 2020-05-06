@@ -20,7 +20,7 @@ class CountryWebInteractorImpl(
 
     private fun getCorrectCountry(base: String, countries: List<CountryResponse>): Country {
         return when (base) {
-            "EUR" -> Country("Euro", "https://restcountries.eu/data/gbr.svg")
+            "EUR" -> Country("Euro", "https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg")
             "GBP" -> Country("British pound", "https://restcountries.eu/data/gbr.svg")
             "AUD" -> Country(countries[1].currencies[0].name, countries[1].flag)
             "USD" -> Country(countries[18].currencies[0].name, countries[18].flag)

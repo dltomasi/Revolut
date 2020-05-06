@@ -32,18 +32,13 @@ class RatesViewModel constructor(
         }
     }
 
-    private fun getRates() {
-        if (first.country == null) {
-            addReaction(
-                countryInteractor.getCountry(first.currency).toObservable()
-                    .backgroundSubscribe(scheduler)
-                    .subscribe(
-                        { first.country = it },
-                        { it.printStackTrace() }
-                    )
-            )
-        }
+    private fun setUpReactions() {
+        getFlagForFirstItem()
+        updateRatesOverTime()
+        textChangeListener()
+    }
 
+    private fun updateRatesOverTime() {
         addReaction(
             Observable
                 .interval(0, TIME_INTERVAL, TimeUnit.SECONDS, scheduler.background)
@@ -68,7 +63,22 @@ class RatesViewModel constructor(
                 .subscribeOn(scheduler.background)
                 .subscribe(::onSuccess, ::handleError)
         )
+    }
 
+    private fun getFlagForFirstItem() {
+        if (first.country == null) {
+            addReaction(
+                countryInteractor.getCountry(first.currency).toObservable()
+                    .backgroundSubscribe(scheduler)
+                    .subscribe(
+                        { first.country = it },
+                        { it.printStackTrace() }
+                    )
+            )
+        }
+    }
+
+    private fun textChangeListener() {
         addReaction(
             textChangeObservable
                 .uiSubscribe(scheduler)
@@ -112,11 +122,11 @@ class RatesViewModel constructor(
 
     fun tryAgain() {
         error.value = false
-        getRates()
+        setUpReactions()
     }
 
     fun onStart() {
-        getRates()
+        setUpReactions()
     }
 
     companion object {

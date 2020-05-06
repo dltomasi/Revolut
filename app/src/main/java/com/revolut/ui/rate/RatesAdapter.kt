@@ -15,6 +15,7 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
 
     private var items = mutableListOf<Rate>()
     lateinit var clickListener: RateListListener
+    var shouldUpdateFirst = false
 
     var textChangeObservable: PublishSubject<String> = PublishSubject.create()
 
@@ -38,7 +39,8 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
     fun setData(rates: List<Rate>) {
         val first = if (items.isEmpty()) Rate.EMPTY else items[0]
         items = rates.toMutableList()
-        if (first.currency == rates[0].currency)
+        shouldUpdateFirst = first.country == null && rates[0].country != null
+        if (first.currency == rates[0].currency && !shouldUpdateFirst)
         // to avoid changing focus on edit text
             notifyItemRangeChanged(1, items.size - 1)
         else notifyDataSetChanged()
@@ -64,18 +66,16 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
                         .map { it.toString() }
                         .subscribe(textChangeObservable)
                 }
+
                 item.country?.let { country ->
                     name.text = country.name
-                    if (country.flag.isNotEmpty())
-                        GlideToVectorYou
-                            .init()
-                            .with(this.context)
-                            .load(Uri.parse(country.flag), flag)
-
+                    GlideToVectorYou
+                        .init()
+                        .with(this.context)
+                        .load(Uri.parse(country.flag), flag)
                 } ?: run {
                     name.text = ""
                 }
-
             }
         }
     }
