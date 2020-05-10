@@ -1,13 +1,16 @@
 package com.revolut.ui.rate
 
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.jakewharton.rxbinding2.widget.RxTextView
 import com.revolut.R
+import com.revolut.country.model.Country
 import com.revolut.rate.model.Rate
+import com.revolut.rate.model.copy
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.rate_item.view.*
 
@@ -38,9 +41,8 @@ class RatesAdapter : RecyclerView.Adapter<RatesAdapter.RateViewHolder>() {
 
     fun setData(rates: List<Rate>) {
         val first = if (items.isEmpty()) Rate.EMPTY else items[0]
-        items = rates.toMutableList()
-        shouldUpdateFirst = first.country == null && rates[0].country != null
-        if (first.currency == rates[0].currency && !shouldUpdateFirst)
+        items = rates.toMutableList().copy()
+        if (first.country == rates[0].country)
         // to avoid changing focus on edit text
             notifyItemRangeChanged(1, items.size - 1)
         else notifyDataSetChanged()

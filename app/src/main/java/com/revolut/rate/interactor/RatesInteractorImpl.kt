@@ -11,8 +11,8 @@ class RatesInteractorImpl(
     private val countryInteractor: CountryInteractor
 ) : RatesInteractor {
 
-    override fun fetchRates(base: String): Observable<List<Rate>> =
-        rateService.fetchRates(base)
+    override fun fetchRates(base: Rate): Observable<List<Rate>> =
+        rateService.fetchRates(base.currency)
             .map { it.rates.toList() }
             .flatMapIterable { it }
             .map { Rate(it.first, it.second, null) }
@@ -24,4 +24,11 @@ class RatesInteractorImpl(
                     }
             }
             .toList().toObservable()
+            .flatMap { list ->
+                countryInteractor.getCountry(base.currency)
+                    .map {
+                        base.country = it
+                        list
+                    }.toObservable()
+            }
 }

@@ -1,9 +1,6 @@
-package com.revolut.interactor
+package com.revolut.country
 
-import androidx.work.WorkManager
 import com.nhaarman.mockito_kotlin.*
-import com.revolut.country.interactor.CountryInteractor
-import com.revolut.country.interactor.CountryInteractorImpl
 import com.revolut.country.interactor.CountryWebInteractor
 import com.revolut.country.interactor.CountryWebInteractorImpl
 import com.revolut.country.model.Country
@@ -11,7 +8,6 @@ import com.revolut.country.model.CountryResponse
 import com.revolut.country.model.CurrencyResponse
 import com.revolut.country.network.CountryService
 import com.revolut.country.persistence.CountryPersistence
-import io.reactivex.Observable
 import io.reactivex.Single
 import org.junit.Before
 import org.junit.Test

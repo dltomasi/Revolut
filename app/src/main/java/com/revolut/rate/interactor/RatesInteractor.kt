@@ -6,5 +6,5 @@ import io.reactivex.Observable
 
 interface RatesInteractor {
 
-    fun fetchRates(base: String): Observable<List<Rate>>
+    fun fetchRates(base: Rate): Observable<List<Rate>>
 }

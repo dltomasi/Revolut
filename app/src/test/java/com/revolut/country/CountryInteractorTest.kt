@@ -1,4 +1,4 @@
-package com.revolut.interactor
+package com.revolut.country
 
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager

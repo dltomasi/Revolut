@@ -7,6 +7,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -14,6 +15,7 @@ import com.revolut.country.interactor.CountryInteractor
 import com.revolut.country.model.Country
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
+import com.revolut.ui.rate.RatesViewModel
 import com.revolut.utils.IdlingResourceViewActions
 import com.revolut.utils.withRecyclerView
 import io.reactivex.Observable
@@ -31,7 +33,7 @@ class RateRobot {
     inner class SetUp {
 
         private val ratesInteractor: RatesInteractor = mock {
-            whenever(it.fetchRates("EUR")) doReturn Observable.just(mockedList)
+            whenever(it.fetchRates(RatesViewModel.START_CURRENCY)) doReturn Observable.just(mockedList)
         }
 
         private val countryInteractor: CountryInteractor = mock {

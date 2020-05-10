@@ -1,4 +1,4 @@
-package com.revolut.interactor
+package com.revolut.rate
 
 import com.google.gson.internal.LinkedTreeMap
 import com.nhaarman.mockito_kotlin.*
@@ -26,6 +26,7 @@ class RatesInteractorTest {
 
     private val c1 = Country("c1", "f1")
     private val c2 = Country("c2", "f2")
+    private val c3 = Country("c3", "f3")
     private val rates = listOf(Rate("r1", 1.0, c1), Rate("r2", 2.0, c2))
 
     init {
@@ -42,20 +43,22 @@ class RatesInteractorTest {
         whenever(rateService.fetchRates(any())).thenReturn(Observable.just(responseData))
         whenever(countryInteractor.getCountry("r1")).thenReturn(Single.just(c1))
         whenever(countryInteractor.getCountry("r2")).thenReturn(Single.just(c2))
+        whenever(countryInteractor.getCountry("r3")).thenReturn(Single.just(c3))
         subject = RatesInteractorImpl(rateService, countryInteractor)
     }
 
     @Test
     fun `fetch data should succeed`() {
-        subject.fetchRates("").test()
+        subject.fetchRates(Rate("r3", 0.0)).test()
             .assertValue(rates)
     }
 
     @Test
     fun `should get country info for each currency`() {
-        subject.fetchRates("").test()
+        subject.fetchRates(Rate("r3", 0.0)).test()
         verify(countryInteractor).getCountry("r1")
         verify(countryInteractor).getCountry("r2")
+        verify(countryInteractor).getCountry("r3")
         verifyNoMoreInteractions(countryInteractor)
     }
 }

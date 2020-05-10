@@ -1,8 +1,6 @@
 package com.revolut.ui.rate
 
 import androidx.lifecycle.MutableLiveData
-import com.revolut.backgroundSubscribe
-import com.revolut.country.interactor.CountryInteractor
 import com.revolut.rate.interactor.RatesInteractor
 import com.revolut.rate.model.Rate
 import com.revolut.rate.model.copy
@@ -13,10 +11,9 @@ import io.reactivex.Observable
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-class RatesViewModel constructor(
+class RatesViewModel(
     private val scheduler: SchedulersProvider,
-    private val ratesInteractor: RatesInteractor,
-    private val countryInteractor: CountryInteractor
+    private val ratesInteractor: RatesInteractor
 ) : BaseViewModel() {
 
     var textChangeObservable: Observable<String> = Observable.empty()
@@ -33,7 +30,6 @@ class RatesViewModel constructor(
     }
 
     private fun setUpReactions() {
-        getFlagForFirstItem()
         updateRatesOverTime()
         textChangeListener()
     }
@@ -46,7 +42,7 @@ class RatesViewModel constructor(
                 .doOnNext { startLoading() }
                 .observeOn(scheduler.background)
                 .flatMapSingle {
-                    ratesInteractor.fetchRates(first.currency)
+                    ratesInteractor.fetchRates(first)
                         .map {
                             originalRates = it.copy()
                             it
@@ -63,19 +59,6 @@ class RatesViewModel constructor(
                 .subscribeOn(scheduler.background)
                 .subscribe(::onSuccess, ::handleError)
         )
-    }
-
-    private fun getFlagForFirstItem() {
-        if (first.country == null) {
-            addReaction(
-                countryInteractor.getCountry(first.currency).toObservable()
-                    .backgroundSubscribe(scheduler)
-                    .subscribe(
-                        { first.country = it },
-                        { it.printStackTrace() }
-                    )
-            )
-        }
     }
 
     private fun textChangeListener() {
