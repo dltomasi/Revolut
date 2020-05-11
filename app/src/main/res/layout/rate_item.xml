@@ -12,21 +12,30 @@
         android:id="@+id/info_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/value_container"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/flag"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/flag_container"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_gravity="center"
+            app:cardCornerRadius="250dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/rate"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@mipmap/ic_launcher" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/flag"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                tools:src="@mipmap/ic_launcher" />
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/rate"
@@ -36,7 +45,7 @@
             android:paddingEnd="10dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@id/flag"
+            app:layout_constraintStart_toEndOf="@id/flag_container"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="EUR" />
 
@@ -48,7 +57,7 @@
             android:paddingEnd="10dp"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/flag"
+            app:layout_constraintStart_toEndOf="@id/flag_container"
             app:layout_constraintTop_toBottomOf="@id/rate"
             tools:text="Euro" />
 
@@ -71,10 +80,10 @@
             android:layout_marginEnd="16dp"
             android:enabled="false"
             android:gravity="center_vertical"
+            android:imeOptions="actionDone"
             android:inputType="numberDecimal"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:imeOptions="actionDone"
             tools:text="1.00" />
 
     </FrameLayout>
